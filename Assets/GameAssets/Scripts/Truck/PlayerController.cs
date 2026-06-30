@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    private static int layerMask;
     private InputSystem_Actions input;
     public VehicleController vehicleController;
     public Transform followTarget;
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        layerMask = LayerMask.GetMask("Default");
         input = new InputSystem_Actions();
         orbitCamera = GetComponentInChildren<Camera>();
 
@@ -56,7 +58,7 @@ public class PlayerController : MonoBehaviour
         Vector2 lookVector = context.ReadValue<Vector2>() * cameraSensitivity;
         if (context.control.device is Gamepad) lookVector *= Time.deltaTime;
         cameraRotation.x += lookVector.x;
-        cameraRotation.y = Mathf.Clamp(cameraRotation.y - lookVector.y, -85f, 85f);
+        cameraRotation.y = Mathf.Clamp(cameraRotation.y - lookVector.y, -90f, 90f);
     }
 
     private void OnZoom(InputAction.CallbackContext context)
@@ -80,8 +82,9 @@ public class PlayerController : MonoBehaviour
         Quaternion targetRotation = Quaternion.Euler(cameraRotation.y, cameraRotation.x, 0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, cameraSpeed * Time.deltaTime);
 
-        var pos = orbitCamera.transform.localPosition;
-        pos.z = Mathf.Lerp(pos.z, -cameraDistance, zoomSpeed * Time.deltaTime);
-        orbitCamera.transform.localPosition = pos;
+        float newDist = Mathf.Lerp(-orbitCamera.transform.localPosition.z, cameraDistance, zoomSpeed * Time.deltaTime);
+        if(Physics.SphereCast(transform.position, orbitCamera.nearClipPlane, -transform.forward, out var hit, newDist + orbitCamera.nearClipPlane, layerMask))
+            newDist = Mathf.Min(newDist, hit.distance - orbitCamera.nearClipPlane);
+        orbitCamera.transform.localPosition = Vector3.back * newDist;
     }
 }
