@@ -1,14 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class PlayerController : MonoBehaviour
 {
     private static int layerMask;
     private InputSystem_Actions input;
+    private Camera orbitCamera;
     public VehicleController vehicleController;
     public Transform followTarget;
-    private Camera orbitCamera;
+    public WinchTarget winchTarget;
 
+    [Header("Camera Settings")]
     [SerializeField] private float cameraSensitivity = 1.0f;
     [SerializeField] private float cameraSpeed = 1.0f;
     [SerializeField] private float zoomSensitivity = 1.0f;
@@ -37,6 +40,15 @@ public class PlayerController : MonoBehaviour
         input.Enable();
         input.Player.Brake.started += OnBrakeStarted;
         input.Player.Brake.canceled += OnBrakeCancelled;
+
+        input.Player.FrontWinch.started += OnFrontWinch;
+        input.Player.FrontWinch.performed += OnFrontWinch;
+        input.Player.FrontWinch.canceled += OnBackWinch;
+
+        input.Player.BackWinch.started += OnBackWinch;
+        input.Player.BackWinch.performed += OnBackWinch;
+        input.Player.BackWinch.canceled += OnBackWinch;
+
         input.Player.Look.performed += OnLook;
         input.Player.Zoom.performed += OnZoom;
     }
@@ -46,12 +58,53 @@ public class PlayerController : MonoBehaviour
         input.Disable();
         input.Player.Brake.started -= OnBrakeStarted;
         input.Player.Brake.canceled -= OnBrakeCancelled;
+
+        input.Player.FrontWinch.started -= OnFrontWinch;
+        input.Player.FrontWinch.performed -= OnFrontWinch;
+        input.Player.FrontWinch.canceled -= OnBackWinch;
+
+        input.Player.BackWinch.started -= OnBackWinch;
+        input.Player.BackWinch.performed -= OnBackWinch;
+        input.Player.BackWinch.canceled -= OnBackWinch;
+
         input.Player.Look.performed -= OnLook;
         input.Player.Zoom.performed -= OnZoom;
     }
 
     private void OnBrakeStarted(InputAction.CallbackContext context) => brake = true;
     private void OnBrakeCancelled(InputAction.CallbackContext context) => brake = false;
+
+    private void OnFrontWinch(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction)
+        {
+            if (!context.performed) return;
+            if (vehicleController.frontWinch.IsAttached)
+            {
+                vehicleController.frontWinch.Detach();
+                return;
+            }
+            if (winchTarget.FrontWinchAvailable)
+                vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
+        }
+        else vehicleController.frontWinch.pull = !(context.performed || context.canceled);
+    }
+
+    private void OnBackWinch(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction)
+        {
+            if (!context.performed) return;
+            if (vehicleController.backWinch.IsAttached)
+            {
+                vehicleController.backWinch.Detach();
+                return;
+            }
+            if (winchTarget.BackWinchAvailable)
+                vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
+        }
+        else vehicleController.backWinch.pull = !(context.performed || context.canceled);
+    }
 
     private void OnLook(InputAction.CallbackContext context)
     {
@@ -86,5 +139,7 @@ public class PlayerController : MonoBehaviour
         if(Physics.SphereCast(transform.position, orbitCamera.nearClipPlane, -transform.forward, out var hit, newDist + orbitCamera.nearClipPlane, layerMask))
             newDist = Mathf.Min(newDist, hit.distance - orbitCamera.nearClipPlane);
         orbitCamera.transform.localPosition = Vector3.back * newDist;
+
+        winchTarget.HandleUpdate(vehicleController.frontWinch, vehicleController.backWinch);
     }
 }

@@ -41,6 +41,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "FrontWinch",
+                    "type": "Button",
+                    "id": "17a8777f-07b4-4005-9021-dbbfb7b031b9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Tap,SlowTap",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "BackWinch",
+                    "type": "Button",
+                    "id": "0dabf1dd-db6d-496e-a377-bdc74720a205",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Tap,SlowTap",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -239,6 +257,50 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Brake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "74eda742-6de5-423b-bdbe-4a7b6b2fc12e",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FrontWinch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7ccc614e-7a84-4194-8cfd-cd21b5ae3338",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FrontWinch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "625710a2-01ea-4a47-bfd2-d804b0665fff",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BackWinch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "043fdb88-74cb-4649-96f4-879ef1cac77f",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "BackWinch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -11,6 +11,9 @@ public class VehicleController : MonoBehaviour
     private Transform wheelMeshBL;
     private Transform wheelMeshBR;
 
+    public Winch frontWinch;
+    public Winch backWinch;
+
     [HideInInspector] public Vector3 driverInput;
     private float currentSteer;
     private float currentTorque;
