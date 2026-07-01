@@ -127,6 +127,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FrontWinch"",
+                    ""type"": ""Button"",
+                    ""id"": ""17a8777f-07b4-4005-9021-dbbfb7b031b9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Tap,SlowTap"",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BackWinch"",
+                    ""type"": ""Button"",
+                    ""id"": ""0dabf1dd-db6d-496e-a377-bdc74720a205"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": ""Tap,SlowTap"",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -325,6 +343,50 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Brake"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74eda742-6de5-423b-bdbe-4a7b6b2fc12e"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FrontWinch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7ccc614e-7a84-4194-8cfd-cd21b5ae3338"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FrontWinch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""625710a2-01ea-4a47-bfd2-d804b0665fff"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BackWinch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""043fdb88-74cb-4649-96f4-879ef1cac77f"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""BackWinch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -916,6 +978,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Brake = m_Player.FindAction("Brake", throwIfNotFound: true);
+        m_Player_FrontWinch = m_Player.FindAction("FrontWinch", throwIfNotFound: true);
+        m_Player_BackWinch = m_Player.FindAction("BackWinch", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1013,6 +1077,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Zoom;
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Brake;
+    private readonly InputAction m_Player_FrontWinch;
+    private readonly InputAction m_Player_BackWinch;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1040,6 +1106,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Brake".
         /// </summary>
         public InputAction @Brake => m_Wrapper.m_Player_Brake;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/FrontWinch".
+        /// </summary>
+        public InputAction @FrontWinch => m_Wrapper.m_Player_FrontWinch;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/BackWinch".
+        /// </summary>
+        public InputAction @BackWinch => m_Wrapper.m_Player_BackWinch;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1078,6 +1152,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Brake.started += instance.OnBrake;
             @Brake.performed += instance.OnBrake;
             @Brake.canceled += instance.OnBrake;
+            @FrontWinch.started += instance.OnFrontWinch;
+            @FrontWinch.performed += instance.OnFrontWinch;
+            @FrontWinch.canceled += instance.OnFrontWinch;
+            @BackWinch.started += instance.OnBackWinch;
+            @BackWinch.performed += instance.OnBackWinch;
+            @BackWinch.canceled += instance.OnBackWinch;
         }
 
         /// <summary>
@@ -1101,6 +1181,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Brake.started -= instance.OnBrake;
             @Brake.performed -= instance.OnBrake;
             @Brake.canceled -= instance.OnBrake;
+            @FrontWinch.started -= instance.OnFrontWinch;
+            @FrontWinch.performed -= instance.OnFrontWinch;
+            @FrontWinch.canceled -= instance.OnFrontWinch;
+            @BackWinch.started -= instance.OnBackWinch;
+            @BackWinch.performed -= instance.OnBackWinch;
+            @BackWinch.canceled -= instance.OnBackWinch;
         }
 
         /// <summary>
@@ -1429,6 +1515,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBrake(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "FrontWinch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFrontWinch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BackWinch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBackWinch(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

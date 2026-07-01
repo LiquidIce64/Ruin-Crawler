@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public Transform followTarget;
     private Camera orbitCamera;
 
+    [Header("Camera Settings")]
     [SerializeField] private float cameraSensitivity = 1.0f;
     [SerializeField] private float cameraSpeed = 1.0f;
     [SerializeField] private float zoomSensitivity = 1.0f;
@@ -37,6 +39,13 @@ public class PlayerController : MonoBehaviour
         input.Enable();
         input.Player.Brake.started += OnBrakeStarted;
         input.Player.Brake.canceled += OnBrakeCancelled;
+
+        input.Player.FrontWinch.started += OnFrontWinch;
+        input.Player.FrontWinch.performed += OnFrontWinch;
+
+        input.Player.BackWinch.started += OnBackWinch;
+        input.Player.BackWinch.performed += OnBackWinch;
+
         input.Player.Look.performed += OnLook;
         input.Player.Zoom.performed += OnZoom;
     }
@@ -46,12 +55,39 @@ public class PlayerController : MonoBehaviour
         input.Disable();
         input.Player.Brake.started -= OnBrakeStarted;
         input.Player.Brake.canceled -= OnBrakeCancelled;
+
+        input.Player.FrontWinch.started -= OnFrontWinch;
+        input.Player.FrontWinch.performed -= OnFrontWinch;
+
+        input.Player.BackWinch.started -= OnBackWinch;
+        input.Player.BackWinch.performed -= OnBackWinch;
+
         input.Player.Look.performed -= OnLook;
         input.Player.Zoom.performed -= OnZoom;
     }
 
     private void OnBrakeStarted(InputAction.CallbackContext context) => brake = true;
     private void OnBrakeCancelled(InputAction.CallbackContext context) => brake = false;
+    private void OnFrontWinch(InputAction.CallbackContext context) => HandleWinch(context, vehicleController.frontWinch);
+    private void OnBackWinch(InputAction.CallbackContext context) => HandleWinch(context, vehicleController.backWinch);
+
+    private void HandleWinch(InputAction.CallbackContext context, Winch winch)
+    {
+        Debug.Log(context.interaction.ToString() + ' ' + context.performed.ToString());
+        if (context.interaction is TapInteraction)
+        {
+            if (!context.performed) return;
+            Debug.Log(123);
+            if (winch.IsAttached)
+            {
+                winch.Detach();
+                return;
+            }
+            Debug.Log(321);
+            winch.AttachToAny();
+        }
+        else winch.pull = !context.performed;
+    }
 
     private void OnLook(InputAction.CallbackContext context)
     {
