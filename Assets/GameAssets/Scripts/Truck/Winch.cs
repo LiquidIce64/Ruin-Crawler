@@ -14,6 +14,7 @@ public class Winch : MonoBehaviour
     private float springForce;
     [HideInInspector] public bool pull = false;
 
+    public float MaxDistance => maxDistance;
     public bool IsAttached => joint.connectedBody != null;
 
     private void Awake()
@@ -35,17 +36,6 @@ public class Winch : MonoBehaviour
         }
     }
 
-    [ContextMenu("Attach to any point in range")]
-    public void AttachToAny()
-    {
-        Detach();
-        foreach (var point in FindAttachmentPoints())
-        {
-            Attach(point);
-            break;
-        }
-    }
-
     public void Attach(Rigidbody attachmentPoint)
     {
         if (attachmentPoint == null)
@@ -59,9 +49,9 @@ public class Winch : MonoBehaviour
         rope.SetActive(true);
     }
 
-    [ContextMenu("Detach")]
     public void Detach()
     {
+        pull = false;
         joint.connectedBody = null;
         joint.spring = 0f;
         rope.SetActive(false);

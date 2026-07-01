@@ -6,9 +6,10 @@ public class PlayerController : MonoBehaviour
 {
     private static int layerMask;
     private InputSystem_Actions input;
+    private Camera orbitCamera;
     public VehicleController vehicleController;
     public Transform followTarget;
-    private Camera orbitCamera;
+    public WinchTarget winchTarget;
 
     [Header("Camera Settings")]
     [SerializeField] private float cameraSensitivity = 1.0f;
@@ -42,9 +43,11 @@ public class PlayerController : MonoBehaviour
 
         input.Player.FrontWinch.started += OnFrontWinch;
         input.Player.FrontWinch.performed += OnFrontWinch;
+        input.Player.FrontWinch.canceled += OnBackWinch;
 
         input.Player.BackWinch.started += OnBackWinch;
         input.Player.BackWinch.performed += OnBackWinch;
+        input.Player.BackWinch.canceled += OnBackWinch;
 
         input.Player.Look.performed += OnLook;
         input.Player.Zoom.performed += OnZoom;
@@ -58,9 +61,11 @@ public class PlayerController : MonoBehaviour
 
         input.Player.FrontWinch.started -= OnFrontWinch;
         input.Player.FrontWinch.performed -= OnFrontWinch;
+        input.Player.FrontWinch.canceled -= OnBackWinch;
 
         input.Player.BackWinch.started -= OnBackWinch;
         input.Player.BackWinch.performed -= OnBackWinch;
+        input.Player.BackWinch.canceled -= OnBackWinch;
 
         input.Player.Look.performed -= OnLook;
         input.Player.Zoom.performed -= OnZoom;
@@ -68,25 +73,37 @@ public class PlayerController : MonoBehaviour
 
     private void OnBrakeStarted(InputAction.CallbackContext context) => brake = true;
     private void OnBrakeCancelled(InputAction.CallbackContext context) => brake = false;
-    private void OnFrontWinch(InputAction.CallbackContext context) => HandleWinch(context, vehicleController.frontWinch);
-    private void OnBackWinch(InputAction.CallbackContext context) => HandleWinch(context, vehicleController.backWinch);
 
-    private void HandleWinch(InputAction.CallbackContext context, Winch winch)
+    private void OnFrontWinch(InputAction.CallbackContext context)
     {
-        Debug.Log(context.interaction.ToString() + ' ' + context.performed.ToString());
         if (context.interaction is TapInteraction)
         {
             if (!context.performed) return;
-            Debug.Log(123);
-            if (winch.IsAttached)
+            if (vehicleController.frontWinch.IsAttached)
             {
-                winch.Detach();
+                vehicleController.frontWinch.Detach();
                 return;
             }
-            Debug.Log(321);
-            winch.AttachToAny();
+            if (winchTarget.FrontWinchAvailable)
+                vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
         }
-        else winch.pull = !context.performed;
+        else vehicleController.frontWinch.pull = !(context.performed || context.canceled);
+    }
+
+    private void OnBackWinch(InputAction.CallbackContext context)
+    {
+        if (context.interaction is TapInteraction)
+        {
+            if (!context.performed) return;
+            if (vehicleController.backWinch.IsAttached)
+            {
+                vehicleController.backWinch.Detach();
+                return;
+            }
+            if (winchTarget.BackWinchAvailable)
+                vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
+        }
+        else vehicleController.backWinch.pull = !(context.performed || context.canceled);
     }
 
     private void OnLook(InputAction.CallbackContext context)
@@ -122,5 +139,7 @@ public class PlayerController : MonoBehaviour
         if(Physics.SphereCast(transform.position, orbitCamera.nearClipPlane, -transform.forward, out var hit, newDist + orbitCamera.nearClipPlane, layerMask))
             newDist = Mathf.Min(newDist, hit.distance - orbitCamera.nearClipPlane);
         orbitCamera.transform.localPosition = Vector3.back * newDist;
+
+        winchTarget.HandleUpdate(vehicleController.frontWinch, vehicleController.backWinch);
     }
 }
