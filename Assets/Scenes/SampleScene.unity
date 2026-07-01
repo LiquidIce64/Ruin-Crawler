@@ -778,9 +778,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2024119880577909356, guid: ea4b86436b7660f4088693e9b00e5a32, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3089225770124443437, guid: ea4b86436b7660f4088693e9b00e5a32, type: 3}
       propertyPath: m_Name
       value: Player Controller
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252984506579623402, guid: ea4b86436b7660f4088693e9b00e5a32, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5840849634406168395, guid: ea4b86436b7660f4088693e9b00e5a32, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8009497934304198577, guid: ea4b86436b7660f4088693e9b00e5a32, type: 3}
       propertyPath: followTarget

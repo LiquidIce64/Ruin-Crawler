@@ -3,6 +3,8 @@ using UnityEngine;
 public class WinchTarget : MonoBehaviour
 {
     [SerializeField] private GameObject sprite;
+    [SerializeField] private GameObject frontWinchKey;
+    [SerializeField] private GameObject backWinchKey;
     private Rigidbody attachmentPoint;
     private bool frontWinchAvailable = false;
     private bool backWinchAvailable = false;
@@ -58,5 +60,7 @@ public class WinchTarget : MonoBehaviour
             sprite.SetActive(frontWinchAvailable || backWinchAvailable);
             transform.localPosition = closestScreenPos * (transform.parent as RectTransform).rect.size;
         }
+        frontWinchKey.SetActive(frontWinchAvailable);
+        backWinchKey.SetActive(backWinchAvailable);
     }
 }
