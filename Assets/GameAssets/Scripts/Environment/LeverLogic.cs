@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class LeverLogic : MonoBehaviour
+public class LeverLogic : MonoBehaviour, IWinchInteractable
 {
     [Header("Аниматор модели")]
     [SerializeField] private Animator animator;

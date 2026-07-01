@@ -21,7 +21,7 @@ public class Winch : MonoBehaviour
     {
         rope = transform.GetChild(0).gameObject;
         rope.SetActive(false);
-        layerMask = LayerMask.GetMask("WinchPoints");
+        layerMask = LayerMask.GetMask("WinchInteractable");
         joint.anchor = transform.localPosition;
         springForce = joint.spring;
         joint.spring = 0f;
@@ -32,7 +32,13 @@ public class Winch : MonoBehaviour
         int hits = Physics.OverlapSphereNonAlloc(transform.position, maxDistance, hitColliders, layerMask);
         for (int i = 0; i < hits; i++)
         {
-            yield return hitColliders[i].attachedRigidbody;
+            var rigidBody = hitColliders[i].attachedRigidbody;
+            if (rigidBody == null)
+            {
+                Debug.LogWarning("WinchInteractable has no attached RigidBody");
+                continue;
+            }
+            yield return rigidBody;
         }
     }
 
@@ -42,6 +48,11 @@ public class Winch : MonoBehaviour
         {
             Detach();
             return;
+        }
+        if (attachmentPoint.gameObject.TryGetComponent(out IWinchInteractable component))
+        {
+            component.Interact();
+            if (component.AutoDetach) return;
         }
         joint.connectedBody = attachmentPoint;
         joint.spring = springForce;
