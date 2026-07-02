@@ -22,21 +22,33 @@ public class VehicleController : MonoBehaviour
 
     [Header("Movement Config")]
     [SerializeField][Range(0f, 90f)] private float maxSteerAngle = 30f;
-    [SerializeField] private float motorTorque = 100f;
+    [SerializeField] private float motorTorque = 250f;
     [SerializeField] private float turboMultiplier = 2.5f;
     [SerializeField] private float brakingForce = 100f;
     [SerializeField] private float jumpVelocity = 9f;
 
     [Header("Stability Config")]
-    [SerializeField] private float centerOfMassY = -0.3f;
-    [SerializeField] private float antiRoll = 5000f;
+    [SerializeField] private float centerOfMassY = -0.5f;
+    [SerializeField] private float antiRoll = 6000f;
 
-    [Header("Sideways Friction")]
+    [Header("Friction Config (Forward)")]
+    [SerializeField] private float forwardExtremumSlip = 0.3f;
+    [SerializeField] private float forwardExtremumValue = 2.2f;
+    [SerializeField] private float forwardAsymptoteSlip = 0.7f;
+    [SerializeField] private float forwardAsymptoteValue = 1.8f;
+    [SerializeField] private float forwardStiffness = 2.5f;
+
+    [Header("Friction Config (Sideways)")]
     [SerializeField] private float sidewaysExtremumSlip = 0.1f;
     [SerializeField] private float sidewaysExtremumValue = 1.5f;
     [SerializeField] private float sidewaysAsymptoteSlip = 0.4f;
     [SerializeField] private float sidewaysAsymptoteValue = 1.0f;
-    [SerializeField] private float sidewaysStiffness = 1.5f;
+    [SerializeField] private float sidewaysStiffness = 2.0f;
+
+    [Header("Hill Climbing")]
+    [SerializeField] private float slopeTorqueMultiplier = 3.0f;
+    [SerializeField] private float slopeAngleThreshold = 5f;
+    [SerializeField] private float downforceCoefficient = 0.5f;
 
     private Rigidbody rb;
     private bool isJumping = false;
@@ -53,18 +65,33 @@ public class VehicleController : MonoBehaviour
 
         rb.centerOfMass = new Vector3(0, centerOfMassY, 0);
 
-        // Apply custom sideways friction to all wheels
-        WheelFrictionCurve sidewaysFriction = new WheelFrictionCurve();
-        sidewaysFriction.extremumSlip = sidewaysExtremumSlip;
-        sidewaysFriction.extremumValue = sidewaysExtremumValue;
-        sidewaysFriction.asymptoteSlip = sidewaysAsymptoteSlip;
-        sidewaysFriction.asymptoteValue = sidewaysAsymptoteValue;
-        sidewaysFriction.stiffness = sidewaysStiffness;
+        ApplyFrictionToWheel(wheelFL);
+        ApplyFrictionToWheel(wheelFR);
+        ApplyFrictionToWheel(wheelBL);
+        ApplyFrictionToWheel(wheelBR);
+    }
 
-        wheelFL.sidewaysFriction = sidewaysFriction;
-        wheelFR.sidewaysFriction = sidewaysFriction;
-        wheelBL.sidewaysFriction = sidewaysFriction;
-        wheelBR.sidewaysFriction = sidewaysFriction;
+    private void ApplyFrictionToWheel(WheelCollider wheel)
+    {
+        WheelFrictionCurve forwardFriction = new WheelFrictionCurve
+        {
+            extremumSlip = forwardExtremumSlip,
+            extremumValue = forwardExtremumValue,
+            asymptoteSlip = forwardAsymptoteSlip,
+            asymptoteValue = forwardAsymptoteValue,
+            stiffness = forwardStiffness
+        };
+        wheel.forwardFriction = forwardFriction;
+
+        WheelFrictionCurve sidewaysFriction = new WheelFrictionCurve
+        {
+            extremumSlip = sidewaysExtremumSlip,
+            extremumValue = sidewaysExtremumValue,
+            asymptoteSlip = sidewaysAsymptoteSlip,
+            asymptoteValue = sidewaysAsymptoteValue,
+            stiffness = sidewaysStiffness
+        };
+        wheel.sidewaysFriction = sidewaysFriction;
     }
 
     public void Jump()
@@ -105,6 +132,18 @@ public class VehicleController : MonoBehaviour
         {
             float torque = driverInput.y * motorTorque;
             if (turbo) torque *= turboMultiplier;
+
+            if (driverInput.y > 0.1f)
+            {
+                float slopeAngle = GetSlopeAngle();
+                if (slopeAngle > slopeAngleThreshold)
+                {
+                    float t = Mathf.Clamp01((slopeAngle - slopeAngleThreshold) / 45f);
+                    float multiplier = Mathf.Lerp(1f, slopeTorqueMultiplier, t);
+                    torque *= multiplier;
+                }
+            }
+
             currentTorque = isJumping ? 0f : torque;
         }
 
@@ -120,6 +159,14 @@ public class VehicleController : MonoBehaviour
     {
         ApplyAntiRoll(wheelFL, wheelFR);
         ApplyAntiRoll(wheelBL, wheelBR);
+        ApplyDownforce();
+    }
+
+    private void ApplyDownforce()
+    {
+        float speed = rb.linearVelocity.magnitude;
+        float downforce = speed * speed * downforceCoefficient;
+        rb.AddForce(-transform.up * downforce, ForceMode.Force);
     }
 
     private void ApplyAntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
@@ -142,5 +189,22 @@ public class VehicleController : MonoBehaviour
             rb.AddForceAtPosition(leftWheel.transform.up * -antiRollForce, leftWheel.transform.position);
         if (groundedR)
             rb.AddForceAtPosition(rightWheel.transform.up * antiRollForce, rightWheel.transform.position);
+    }
+
+    private float GetSlopeAngle()
+    {
+        Vector3 averageNormal = Vector3.zero;
+        int groundedCount = 0;
+        WheelHit hit;
+
+        if (wheelFL.GetGroundHit(out hit)) { averageNormal += hit.normal; groundedCount++; }
+        if (wheelFR.GetGroundHit(out hit)) { averageNormal += hit.normal; groundedCount++; }
+        if (wheelBL.GetGroundHit(out hit)) { averageNormal += hit.normal; groundedCount++; }
+        if (wheelBR.GetGroundHit(out hit)) { averageNormal += hit.normal; groundedCount++; }
+
+        if (groundedCount == 0) return 0f;
+
+        averageNormal /= groundedCount;
+        return Vector3.Angle(Vector3.up, averageNormal);
     }
 }
