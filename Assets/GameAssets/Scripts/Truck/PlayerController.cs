@@ -103,10 +103,7 @@ public class PlayerController : MonoBehaviour
         }
         else // hold interaction
         {
-            if (context.performed)
-                vehicleController.frontWinch.pull = true;
-            else if (context.canceled)
-                vehicleController.frontWinch.pull = false;
+            vehicleController.frontWinch.pull = context.started;
         }
     }
 
@@ -125,10 +122,7 @@ public class PlayerController : MonoBehaviour
         }
         else // hold interaction
         {
-            if (context.performed)
-                vehicleController.backWinch.pull = true;
-            else if (context.canceled)
-                vehicleController.backWinch.pull = false;
+            vehicleController.backWinch.pull = context.started;
         }
     }
 
