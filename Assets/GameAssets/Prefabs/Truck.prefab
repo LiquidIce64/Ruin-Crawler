@@ -130,9 +130,27 @@ MonoBehaviour:
   frontWinch: {fileID: 1970242219589970756}
   backWinch: {fileID: 5628641308951178617}
   driverInput: {x: 0, y: 0, z: 0}
+  turbo: 0
   maxSteerAngle: 20
   motorTorque: 150
+  turboMultiplier: 2.5
   brakingForce: 500
+  jumpVelocity: 9
+  centerOfMassY: -0.5
+  antiRoll: 6000
+  forwardExtremumSlip: 0.3
+  forwardExtremumValue: 2.2
+  forwardAsymptoteSlip: 0.7
+  forwardAsymptoteValue: 1.8
+  forwardStiffness: 2.5
+  sidewaysExtremumSlip: 0.1
+  sidewaysExtremumValue: 1.5
+  sidewaysAsymptoteSlip: 0.4
+  sidewaysAsymptoteValue: 1
+  sidewaysStiffness: 2
+  slopeTorqueMultiplier: 3
+  slopeAngleThreshold: 5
+  downforceCoefficient: 0.5
 --- !u!54 &5021227981338017016
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -326,7 +344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Winch
   joint: {fileID: 8119891546564628903}
-  maxDistance: 10
+  maxDistance: 15
   minDistance: 0.5
   winchSpeed: 1
   pull: 0
@@ -735,7 +753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Winch
   joint: {fileID: 5893362505188566848}
-  maxDistance: 10
+  maxDistance: 15
   minDistance: 0.5
   winchSpeed: 1
   pull: 0
@@ -787,6 +805,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4f4b0cac456d304abe57aa47bf812e4, type: 2}
     - target: {fileID: 919132149155446097, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
       propertyPath: m_Name
       value: Wheel
@@ -853,6 +875,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4f4b0cac456d304abe57aa47bf812e4, type: 2}
     - target: {fileID: 919132149155446097, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
       propertyPath: m_Name
       value: Wheel
@@ -919,6 +945,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b5306413e765d454a9a37011f6734828, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9ddb611970e33cf45ba031dff8e7b485, type: 2}
     - target: {fileID: 919132149155446097, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_Name
       value: Truck body
@@ -989,6 +1019,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4f4b0cac456d304abe57aa47bf812e4, type: 2}
     - target: {fileID: 919132149155446097, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
       propertyPath: m_Name
       value: Wheel
@@ -1055,6 +1089,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d4f4b0cac456d304abe57aa47bf812e4, type: 2}
     - target: {fileID: 919132149155446097, guid: 8d624e9fcb158c94f86d2d0876392976, type: 3}
       propertyPath: m_Name
       value: Wheel
