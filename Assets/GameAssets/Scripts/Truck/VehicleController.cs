@@ -207,4 +207,10 @@ public class VehicleController : MonoBehaviour
         averageNormal /= groundedCount;
         return Vector3.Angle(Vector3.up, averageNormal);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out IVehicleTrigger trigger))
+            trigger.OnTrigger();
+    }
 }
