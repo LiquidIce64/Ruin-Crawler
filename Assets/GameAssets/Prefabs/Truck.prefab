@@ -129,6 +129,21 @@ MonoBehaviour:
   wheelBR: {fileID: 6345557705569090212}
   frontWinch: {fileID: 1970242219589970756}
   backWinch: {fileID: 5628641308951178617}
+  onVehicleDestroyed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2755007060499765411}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   driverInput: {x: 0, y: 0, z: 0}
   turbo: 0
   maxSteerAngle: 20

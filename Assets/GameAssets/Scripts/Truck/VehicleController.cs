@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class VehicleController : MonoBehaviour
 {
+    [Header("Object Linking")]
     [SerializeField] private WheelCollider wheelFL;
     [SerializeField] private WheelCollider wheelFR;
     [SerializeField] private WheelCollider wheelBL;
@@ -13,6 +15,8 @@ public class VehicleController : MonoBehaviour
 
     public Winch frontWinch;
     public Winch backWinch;
+
+    public UnityEvent onVehicleDestroyed = new();
 
     [HideInInspector] public Vector3 driverInput;
     [HideInInspector] public bool turbo;
@@ -206,5 +210,11 @@ public class VehicleController : MonoBehaviour
 
         averageNormal /= groundedCount;
         return Vector3.Angle(Vector3.up, averageNormal);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out IVehicleTrigger trigger))
+            trigger.OnTrigger(this);
     }
 }

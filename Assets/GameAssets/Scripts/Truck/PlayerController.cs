@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour
         cameraRotation.x = euler.y;
         cameraRotation.y = euler.x;
         cameraDistance = Mathf.Clamp(-orbitCamera.transform.localPosition.z, minCameraDistance, maxCameraDistance);
+
+        vehicleController.onVehicleDestroyed.AddListener(OnVehicleDestroyed);
     }
 
     private void OnEnable()
@@ -139,6 +141,11 @@ public class PlayerController : MonoBehaviour
         float zoomDelta = context.ReadValue<float>() * zoomSensitivity;
         if (context.control.device is Gamepad) zoomDelta *= Time.deltaTime;
         cameraDistance = Mathf.Clamp(cameraDistance - zoomDelta, minCameraDistance, maxCameraDistance);
+    }
+
+    private void OnVehicleDestroyed()
+    {
+        // TODO: Show death screen
     }
 
     private void HandleDriverInput()
