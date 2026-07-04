@@ -12,12 +12,12 @@ public class PlayerController : MonoBehaviour
     public WinchTarget winchTarget;
 
     [Header("Camera Settings")]
-    [SerializeField] private float cameraSensitivity = 1.0f;
-    [SerializeField] private float cameraSpeed = 1.0f;
-    [SerializeField] private float zoomSensitivity = 1.0f;
-    [SerializeField] private float zoomSpeed = 1.0f;
-    [SerializeField] private float minCameraDistance = 4f;
-    [SerializeField] private float maxCameraDistance = 16f;
+    private float cameraSensitivity = 0.5f;
+    private float cameraSpeed = 10.0f;
+    private float zoomSensitivity = 1.0f;
+    private float zoomSpeed = 5.0f;
+    private float minCameraDistance = 4f;
+    private float maxCameraDistance = 16f;
     private float cameraDistance;
     private Vector2 cameraRotation;
 
@@ -103,9 +103,19 @@ public class PlayerController : MonoBehaviour
             if (winchTarget != null && winchTarget.FrontWinchAvailable)
                 vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
         }
-        else // hold interaction
+        else
         {
-            vehicleController.frontWinch.pull = context.started;
+            bool ctrl = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
+            if (ctrl)
+            {
+                vehicleController.frontWinch.extend = context.started;
+                vehicleController.frontWinch.pull = false;
+            }
+            else
+            {
+                vehicleController.frontWinch.pull = context.started;
+                vehicleController.frontWinch.extend = false;
+            }
         }
     }
 
@@ -122,9 +132,19 @@ public class PlayerController : MonoBehaviour
             if (winchTarget != null && winchTarget.BackWinchAvailable)
                 vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
         }
-        else // hold interaction
+        else
         {
-            vehicleController.backWinch.pull = context.started;
+            bool ctrl = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
+            if (ctrl)
+            {
+                vehicleController.backWinch.extend = context.started;
+                vehicleController.backWinch.pull = false;
+            }
+            else
+            {
+                vehicleController.backWinch.pull = context.started;
+                vehicleController.backWinch.extend = false;
+            }
         }
     }
 

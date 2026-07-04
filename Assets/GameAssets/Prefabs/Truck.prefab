@@ -131,28 +131,18 @@ MonoBehaviour:
   backWinch: {fileID: 5628641308951178617}
   onVehicleDestroyed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2755007060499765411}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   driverInput: {x: 0, y: 0, z: 0}
   turbo: 0
-  maxSteerAngle: 20
-  motorTorque: 150
-  turboMultiplier: 2.5
-  brakingForce: 500
+  maxSteerAngle: 30
+  motorTorque: 312.5
+  turboMultiplier: 2
+  brakingForce: 100
   jumpVelocity: 9
+  swingForce: 5000
   centerOfMassY: -0.5
   antiRoll: 6000
+  yawDamping: 2.5
   forwardExtremumSlip: 0.3
   forwardExtremumValue: 2.2
   forwardAsymptoteSlip: 0.7
@@ -163,7 +153,7 @@ MonoBehaviour:
   sidewaysAsymptoteSlip: 0.4
   sidewaysAsymptoteValue: 1
   sidewaysStiffness: 2
-  slopeTorqueMultiplier: 3
+  slopeTorqueMultiplier: 2
   slopeAngleThreshold: 5
   downforceCoefficient: 0.5
 --- !u!54 &5021227981338017016
@@ -363,6 +353,7 @@ MonoBehaviour:
   minDistance: 0.5
   winchSpeed: 1
   pull: 0
+  extend: 0
 --- !u!1 &6710156559088798371
 GameObject:
   m_ObjectHideFlags: 0
@@ -772,6 +763,7 @@ MonoBehaviour:
   minDistance: 0.5
   winchSpeed: 1
   pull: 0
+  extend: 0
 --- !u!1001 &665254211070358406
 PrefabInstance:
   m_ObjectHideFlags: 0

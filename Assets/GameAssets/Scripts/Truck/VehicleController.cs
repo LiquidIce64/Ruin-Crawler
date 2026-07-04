@@ -8,13 +8,13 @@ public class VehicleController : MonoBehaviour
     [SerializeField] private WheelCollider wheelFR;
     [SerializeField] private WheelCollider wheelBL;
     [SerializeField] private WheelCollider wheelBR;
-    private Transform wheelMeshFL;
-    private Transform wheelMeshFR;
-    private Transform wheelMeshBL;
-    private Transform wheelMeshBR;
+    [SerializeField] private Transform wheelMeshFL;
+    [SerializeField] private Transform wheelMeshFR;
+    [SerializeField] private Transform wheelMeshBL;
+    [SerializeField] private Transform wheelMeshBR;
 
-    public Winch frontWinch;
-    public Winch backWinch;
+    [SerializeField] public Winch frontWinch;
+    [SerializeField] public Winch backWinch;
 
     public UnityEvent onVehicleDestroyed = new();
 
@@ -25,34 +25,35 @@ public class VehicleController : MonoBehaviour
     private float currentBrake;
 
     [Header("Movement Config")]
-    [SerializeField][Range(0f, 90f)] private float maxSteerAngle = 30f;
-    [SerializeField] private float motorTorque = 250f;
-    [SerializeField] private float turboMultiplier = 2.5f;
-    [SerializeField] private float brakingForce = 100f;
-    [SerializeField] private float jumpVelocity = 9f;
+    [Range(0f, 90f)] private float maxSteerAngle = 30f;
+    private float motorTorque = 200f;
+    private float turboMultiplier = 2.0f;
+    private float brakingForce = 100f;
+    private float jumpVelocity = 9f;
+    private float swingForce = 2.2f;
 
     [Header("Stability Config")]
-    [SerializeField] private float centerOfMassY = -0.5f;
-    [SerializeField] private float antiRoll = 6000f;
+    private float centerOfMassY = -0.5f;
+    private float antiRoll = 6000f;
+    private float yawDamping = 50f;
 
     [Header("Friction Config (Forward)")]
-    [SerializeField] private float forwardExtremumSlip = 0.3f;
-    [SerializeField] private float forwardExtremumValue = 2.2f;
-    [SerializeField] private float forwardAsymptoteSlip = 0.7f;
-    [SerializeField] private float forwardAsymptoteValue = 1.8f;
-    [SerializeField] private float forwardStiffness = 2.5f;
+    private float forwardExtremumSlip = 0.3f;
+    private float forwardExtremumValue = 2.2f;
+    private float forwardAsymptoteSlip = 0.7f;
+    private float forwardAsymptoteValue = 1.8f;
+    private float forwardStiffness = 2.5f;
 
     [Header("Friction Config (Sideways)")]
-    [SerializeField] private float sidewaysExtremumSlip = 0.1f;
-    [SerializeField] private float sidewaysExtremumValue = 1.5f;
-    [SerializeField] private float sidewaysAsymptoteSlip = 0.4f;
-    [SerializeField] private float sidewaysAsymptoteValue = 1.0f;
-    [SerializeField] private float sidewaysStiffness = 2.0f;
+    private float sidewaysExtremumSlip = 0.1f;
+    private float sidewaysExtremumValue = 1.5f;
+    private float sidewaysAsymptoteSlip = 0.4f;
+    private float sidewaysAsymptoteValue = 1.0f;
+    private float sidewaysStiffness = 2.0f;
 
     [Header("Hill Climbing")]
-    [SerializeField] private float slopeTorqueMultiplier = 3.0f;
-    [SerializeField] private float slopeAngleThreshold = 5f;
-    [SerializeField] private float downforceCoefficient = 0.5f;
+    private float slopeAngleThreshold = 5f;
+    private float downforceCoefficient = 0.5f;
 
     private Rigidbody rb;
     private bool isJumping = false;
@@ -100,12 +101,17 @@ public class VehicleController : MonoBehaviour
 
     public void Jump()
     {
-        if (wheelFL.isGrounded || wheelFR.isGrounded || wheelBL.isGrounded || wheelBR.isGrounded)
+        if (IsAnyWheelGrounded())
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
             isJumping = true;
             jumpTimer = jumpDuration;
         }
+    }
+
+    private bool IsAnyWheelGrounded()
+    {
+        return wheelFL.isGrounded || wheelFR.isGrounded || wheelBL.isGrounded || wheelBR.isGrounded;
     }
 
     private void UpdateWheel(WheelCollider wheel, Transform wheelMesh, bool canSteer = false, bool canDrive = true, bool canBrake = true)
@@ -120,38 +126,52 @@ public class VehicleController : MonoBehaviour
 
     private void Update()
     {
+        bool winchAttached = frontWinch.IsAttached || backWinch.IsAttached;
+        bool grounded = IsAnyWheelGrounded();
+
         if (isJumping)
         {
             jumpTimer -= Time.deltaTime;
             if (jumpTimer <= 0f) isJumping = false;
         }
 
-        currentSteer = driverInput.x * maxSteerAngle;
-
-        if (driverInput.z > 0.1f)
+        if (winchAttached && !grounded)
         {
+            currentSteer = 0f;
             currentTorque = 0f;
+            currentBrake = 0f;
         }
         else
         {
-            float torque = driverInput.y * motorTorque;
-            if (turbo) torque *= turboMultiplier;
+            currentSteer = driverInput.x * maxSteerAngle;
 
-            if (driverInput.y > 0.1f)
+            if (driverInput.z > 0.1f)
             {
-                float slopeAngle = GetSlopeAngle();
-                if (slopeAngle > slopeAngleThreshold)
+                currentTorque = 0f;
+            }
+            else
+            {
+                float torque = driverInput.y * motorTorque;
+                if (turbo && driverInput.y > 0.1f)
+                    torque *= turboMultiplier;
+
+                if (driverInput.y > 0.1f)
                 {
-                    float t = Mathf.Clamp01((slopeAngle - slopeAngleThreshold) / 45f);
-                    float multiplier = Mathf.Lerp(1f, slopeTorqueMultiplier, t);
-                    torque *= multiplier;
+                    float slopeAngle = GetSlopeAngle();
+                    if (slopeAngle > slopeAngleThreshold)
+                    {
+                        if (slopeAngle < 20f)
+                            torque *= 2f;
+                        else
+                            torque *= 3f;
+                    }
                 }
+
+                currentTorque = isJumping ? 0f : torque;
             }
 
-            currentTorque = isJumping ? 0f : torque;
+            currentBrake = driverInput.z * brakingForce;
         }
-
-        currentBrake = driverInput.z * brakingForce;
 
         UpdateWheel(wheelFL, wheelMeshFL, canSteer: true);
         UpdateWheel(wheelFR, wheelMeshFR, canSteer: true);
@@ -164,6 +184,34 @@ public class VehicleController : MonoBehaviour
         ApplyAntiRoll(wheelFL, wheelFR);
         ApplyAntiRoll(wheelBL, wheelBR);
         ApplyDownforce();
+        ApplyYawStabilization();
+
+        bool winchAttached = frontWinch.IsAttached || backWinch.IsAttached;
+        if (winchAttached && !IsAnyWheelGrounded())
+        {
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                Vector3 camForward = cam.transform.forward;
+                camForward.y = 0f;
+                camForward.Normalize();
+
+                Vector3 camRight = cam.transform.right;
+                camRight.y = 0f;
+                camRight.Normalize();
+
+                Vector3 inputDir = (camForward * driverInput.y + camRight * driverInput.x).normalized;
+                if (inputDir.sqrMagnitude > 0.01f)
+                    rb.AddForce(inputDir * swingForce, ForceMode.Acceleration);
+            }
+        }
+    }
+
+    private void ApplyYawStabilization()
+    {
+        float yawVelocity = Vector3.Dot(rb.angularVelocity, transform.up);
+        float dampingTorque = -yawVelocity * yawDamping;
+        rb.AddTorque(transform.up * dampingTorque, ForceMode.Force);
     }
 
     private void ApplyDownforce()

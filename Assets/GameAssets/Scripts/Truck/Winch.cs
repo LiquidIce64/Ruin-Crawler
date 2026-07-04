@@ -6,13 +6,17 @@ public class Winch : MonoBehaviour
     private static int layerMask;
 
     [SerializeField] private SpringJoint joint;
-    [SerializeField] private float maxDistance = 10f;
-    [SerializeField] private float minDistance = 1f;
-    [SerializeField] private float winchSpeed = 1f;
+    private float maxDistance = 15f;
+    private float minDistance = 1f;
+    private float winchSpeed = 2f;
     private GameObject rope;
     private readonly Collider[] hitColliders = new Collider[10]; //pre-allocating memory for performance
     private float springForce;
     [HideInInspector] public bool pull = false;
+    [HideInInspector] public bool extend = false;
+
+    private float autoShortenTimer = 0f;
+    private bool autoShortenActive = false;
 
     public float MaxDistance => maxDistance;
     public bool IsAttached => joint.connectedBody != null;
@@ -54,15 +58,20 @@ public class Winch : MonoBehaviour
             component.Interact();
             if (component.AutoDetach) return;
         }
+
         joint.connectedBody = attachmentPoint;
         joint.spring = springForce;
-        joint.maxDistance = Vector3.Distance(transform.position, attachmentPoint.position);
+        float initialDistance = Vector3.Distance(transform.position, attachmentPoint.position);
+        joint.maxDistance = Mathf.Clamp(initialDistance, minDistance, maxDistance);
+        autoShortenActive = true;
+        autoShortenTimer = 3f;
         rope.SetActive(true);
     }
 
     public void Detach()
     {
         pull = false;
+        extend = false;
         joint.connectedBody = null;
         joint.spring = 0f;
         rope.SetActive(false);
@@ -72,9 +81,26 @@ public class Winch : MonoBehaviour
     {
         if (joint.connectedBody == null) return;
         transform.LookAt(joint.connectedBody.position);
-        transform.localScale = new Vector3(1f, 1f, Vector3.Distance(transform.position, joint.connectedBody.position));
+        float actualDistance = Vector3.Distance(transform.position, joint.connectedBody.position);
+        transform.localScale = new Vector3(1f, 1f, actualDistance);
 
-        if (pull && joint.maxDistance > minDistance)
+        // Автоматическое укорачивание только первые 3 секунды
+        if (autoShortenActive)
+        {
+            autoShortenTimer -= Time.deltaTime;
+            if (autoShortenTimer > 0f && actualDistance < joint.maxDistance)
+            {
+                joint.maxDistance = Mathf.Max(actualDistance, minDistance);
+            }
+            if (autoShortenTimer <= 0f)
+            {
+                autoShortenActive = false;
+            }
+        }
+
+        if (extend && joint.maxDistance < maxDistance)
+            joint.maxDistance = Mathf.Min(joint.maxDistance + winchSpeed * Time.deltaTime, maxDistance);
+        else if (pull && joint.maxDistance > minDistance)
             joint.maxDistance = Mathf.Max(joint.maxDistance - winchSpeed * Time.deltaTime, minDistance);
     }
 }
