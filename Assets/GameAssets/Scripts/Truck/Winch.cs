@@ -15,6 +15,10 @@ public class Winch : MonoBehaviour
     [HideInInspector] public bool pull = false;
     [HideInInspector] public bool extend = false;
 
+    private float ropeAnimSpeed = 2f;
+    private float ropeAnimT = 0f;
+    private float lastRopeDistance = 0f;
+
     private float autoShortenTimer = 0f;
     private bool autoShortenActive = false;
 
@@ -56,7 +60,14 @@ public class Winch : MonoBehaviour
         if (attachmentPoint.gameObject.TryGetComponent(out IWinchInteractable component))
         {
             component.Interact();
-            if (component.AutoDetach) return;
+            if (component.AutoDetach)
+            {
+                transform.LookAt(attachmentPoint.position);
+                lastRopeDistance = Vector3.Distance(transform.position, attachmentPoint.position);
+                rope.SetActive(true);
+                Detach();
+                return;
+            }
         }
 
         joint.connectedBody = attachmentPoint;
@@ -74,15 +85,22 @@ public class Winch : MonoBehaviour
         extend = false;
         joint.connectedBody = null;
         joint.spring = 0f;
-        rope.SetActive(false);
+        ropeAnimT = 1f;
     }
 
     private void Update()
     {
-        if (joint.connectedBody == null) return;
+        if (joint.connectedBody == null)
+        {
+            ropeAnimT = Mathf.Clamp(ropeAnimT - ropeAnimSpeed * Time.deltaTime, 0f, 1f);
+            transform.localScale = new Vector3(1f, 1f, lastRopeDistance * ropeAnimT * ropeAnimT);
+            rope.SetActive(ropeAnimT > 0f);
+            return;
+        }
         transform.LookAt(joint.connectedBody.position);
         float actualDistance = Vector3.Distance(transform.position, joint.connectedBody.position);
         transform.localScale = new Vector3(1f, 1f, actualDistance);
+        lastRopeDistance = actualDistance;
 
         // Автоматическое укорачивание только первые 3 секунды
         if (autoShortenActive)
