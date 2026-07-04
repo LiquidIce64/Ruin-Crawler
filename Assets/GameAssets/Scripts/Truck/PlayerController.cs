@@ -11,6 +11,12 @@ public class PlayerController : MonoBehaviour
     public Transform followTarget;
     public WinchTarget winchTarget;
 
+    public System.Action onFrontWinchAttached;
+    public System.Action onBackWinchAttached;
+    public System.Action onFrontWinchDetached;
+    public System.Action onBackWinchDetached;
+    public System.Action onAnyWinchPull;
+
     [Header("Camera Settings")]
     private float cameraSensitivity = 0.5f;
     private float cameraSpeed = 10.0f;
@@ -86,8 +92,16 @@ public class PlayerController : MonoBehaviour
     private void OnBrakeStarted(InputAction.CallbackContext context) => brake = true;
     private void OnBrakeCancelled(InputAction.CallbackContext context) => brake = false;
 
-    private void OnBoostStarted(InputAction.CallbackContext context) => vehicleController.turbo = true;
-    private void OnBoostCancelled(InputAction.CallbackContext context) => vehicleController.turbo = false;
+    private void OnBoostStarted(InputAction.CallbackContext context)
+    {
+        vehicleController.turbo = true;
+        vehicleController.onTurboChanged?.Invoke(true);
+    }
+    private void OnBoostCancelled(InputAction.CallbackContext context)
+    {
+        vehicleController.turbo = false;
+        vehicleController.onTurboChanged?.Invoke(false);
+    }
     private void OnJump(InputAction.CallbackContext context) => vehicleController.Jump();
 
     private void OnFrontWinch(InputAction.CallbackContext context)
@@ -98,10 +112,14 @@ public class PlayerController : MonoBehaviour
             if (vehicleController.frontWinch.IsAttached)
             {
                 vehicleController.frontWinch.Detach();
+                onFrontWinchDetached?.Invoke();
                 return;
             }
             if (winchTarget != null && winchTarget.FrontWinchAvailable)
+            {
                 vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
+                onFrontWinchAttached?.Invoke();
+            }
         }
         else
         {
@@ -115,6 +133,10 @@ public class PlayerController : MonoBehaviour
             {
                 vehicleController.frontWinch.pull = context.started;
                 vehicleController.frontWinch.extend = false;
+                if (context.started)
+                {
+                    onAnyWinchPull?.Invoke();
+                }
             }
         }
     }
@@ -127,10 +149,14 @@ public class PlayerController : MonoBehaviour
             if (vehicleController.backWinch.IsAttached)
             {
                 vehicleController.backWinch.Detach();
+                onBackWinchDetached?.Invoke();
                 return;
             }
             if (winchTarget != null && winchTarget.BackWinchAvailable)
+            {
                 vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
+                onBackWinchAttached?.Invoke();
+            }
         }
         else
         {
@@ -144,6 +170,10 @@ public class PlayerController : MonoBehaviour
             {
                 vehicleController.backWinch.pull = context.started;
                 vehicleController.backWinch.extend = false;
+                if (context.started)
+                {
+                    onAnyWinchPull?.Invoke();
+                }
             }
         }
     }
