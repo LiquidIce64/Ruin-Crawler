@@ -75,7 +75,7 @@ public class Winch : MonoBehaviour
         float initialDistance = Vector3.Distance(transform.position, attachmentPoint.position);
         joint.maxDistance = Mathf.Clamp(initialDistance, minDistance, maxDistance);
         autoShortenActive = true;
-        autoShortenTimer = 3f;
+        autoShortenTimer = 2f;
         rope.SetActive(true);
     }
 
@@ -102,7 +102,7 @@ public class Winch : MonoBehaviour
         transform.localScale = new Vector3(1f, 1f, actualDistance);
         lastRopeDistance = actualDistance;
 
-        // Автоматическое укорачивание только первые 3 секунды
+        // Автоматическое укорачивание только первые 2 секунды
         if (autoShortenActive)
         {
             autoShortenTimer -= Time.deltaTime;

@@ -18,6 +18,13 @@ public class VehicleController : MonoBehaviour
 
     public UnityEvent onVehicleDestroyed = new();
 
+    [HideInInspector] public System.Action onJumpPerformed;
+    [HideInInspector] public System.Action<bool> onTurboChanged;
+
+    [Header("Effects")]
+    [SerializeField] private ParticleSystem turboParticles;
+    [SerializeField] private ParticleSystem jumpParticles;
+
     [HideInInspector] public Vector3 driverInput;
     [HideInInspector] public bool turbo;
     private float currentSteer;
@@ -106,6 +113,13 @@ public class VehicleController : MonoBehaviour
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
             isJumping = true;
             jumpTimer = jumpDuration;
+
+            if (jumpParticles != null)
+            {
+                jumpParticles.Play();
+            }
+
+            onJumpPerformed?.Invoke();
         }
     }
 
@@ -124,16 +138,22 @@ public class VehicleController : MonoBehaviour
         wheelMesh.SetPositionAndRotation(pos, quat);
     }
 
-    private void Update()
+    private void UpdateTurboParticles()
+    {
+        if (turboParticles != null)
+        {
+            bool shouldPlay = turbo && driverInput.y > 0.1f;
+            if (shouldPlay && !turboParticles.isPlaying)
+                turboParticles.Play();
+            else if (!shouldPlay && turboParticles.isPlaying)
+                turboParticles.Stop();
+        }
+    }
+
+    private void UpdateDrivingInput()
     {
         bool winchAttached = frontWinch.IsAttached || backWinch.IsAttached;
         bool grounded = IsAnyWheelGrounded();
-
-        if (isJumping)
-        {
-            jumpTimer -= Time.deltaTime;
-            if (jumpTimer <= 0f) isJumping = false;
-        }
 
         if (winchAttached && !grounded)
         {
@@ -152,6 +172,7 @@ public class VehicleController : MonoBehaviour
             else
             {
                 float torque = driverInput.y * motorTorque;
+
                 if (turbo && driverInput.y > 0.1f)
                     torque *= turboMultiplier;
 
@@ -160,23 +181,34 @@ public class VehicleController : MonoBehaviour
                     float slopeAngle = GetSlopeAngle();
                     if (slopeAngle > slopeAngleThreshold)
                     {
-                        if (slopeAngle < 20f)
-                            torque *= 2f;
-                        else
-                            torque *= 3f;
+                        torque *= (slopeAngle < 20f) ? 1.5f : 2.5f;
                     }
                 }
 
                 currentTorque = isJumping ? 0f : torque;
             }
-
             currentBrake = driverInput.z * brakingForce;
         }
+    }
+
+    private void Update()
+    {
+        bool winchAttached = frontWinch.IsAttached || backWinch.IsAttached;
+        bool grounded = IsAnyWheelGrounded();
+
+        if (isJumping)
+        {
+            jumpTimer -= Time.deltaTime;
+            if (jumpTimer <= 0f) isJumping = false;
+        }
+
+        UpdateDrivingInput();
 
         UpdateWheel(wheelFL, wheelMeshFL, canSteer: true);
         UpdateWheel(wheelFR, wheelMeshFR, canSteer: true);
         UpdateWheel(wheelBL, wheelMeshBL);
         UpdateWheel(wheelBR, wheelMeshBR);
+        UpdateTurboParticles();
     }
 
     private void FixedUpdate()
