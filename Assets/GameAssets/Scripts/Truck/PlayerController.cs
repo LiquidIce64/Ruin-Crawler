@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     public VehicleController vehicleController;
     public Transform followTarget;
     public WinchTarget winchTarget;
+    [SerializeField] private DeathScreen deathScreen;
+    [SerializeField] private PauseMenu pauseMenu;
+    [SerializeField] private bool manualDestroyEnabled = true;
 
     public System.Action onFrontWinchAttached;
     public System.Action onBackWinchAttached;
@@ -32,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 cameraRotation;
 
     private bool brake = false;
+    private bool isVehicleDestroyed;
 
     private void Awake()
     {
@@ -91,6 +95,12 @@ public class PlayerController : MonoBehaviour
         input.Player.BackWinch.started -= OnBackWinch;
         input.Player.BackWinch.performed -= OnBackWinch;
         input.Player.BackWinch.canceled -= OnBackWinch;
+    }
+
+    private void OnDestroy()
+    {
+        if (vehicleController != null)
+            vehicleController.onVehicleDestroyed.RemoveListener(OnVehicleDestroyed);
     }
 
     private void OnBrakeStarted(InputAction.CallbackContext context) => brake = true;
@@ -199,7 +209,31 @@ public class PlayerController : MonoBehaviour
 
     private void OnVehicleDestroyed()
     {
-        // TODO: Show death screen
+        if (isVehicleDestroyed)
+            return;
+
+        isVehicleDestroyed = true;
+        brake = false;
+        moveVector = Vector2.zero;
+
+        input.Player.Disable();
+
+        if (vehicleController != null)
+        {
+            vehicleController.driverInput = Vector3.zero;
+            vehicleController.turbo = false;
+            vehicleController.onTurboChanged?.Invoke(false);
+        }
+
+        if (pauseMenu != null)
+            pauseMenu.LockPause();
+
+        Time.timeScale = 0f;
+
+        if (deathScreen != null)
+            deathScreen.Show();
+        else
+            Debug.LogWarning("Death screen is not assigned in PlayerController.");
     }
 
     private void HandleDriverInput()
@@ -213,10 +247,23 @@ public class PlayerController : MonoBehaviour
         vehicleController.driverInput = new Vector3(moveVector.x, moveVector.y, brake ? 1f : 0f);
     }
 
+    private void HandleManualDestroyInput()
+    {
+        if (!manualDestroyEnabled || isVehicleDestroyed || vehicleController == null)
+            return;
+
+        if (pauseMenu != null && pauseMenu.PauseGame)
+            return;
+
+        if (Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
+            vehicleController.DestroyVehicle();
+    }
+
     private void Update()
     {
         if (followTarget != null) transform.position = followTarget.position;
-        if (vehicleController != null) HandleDriverInput();
+        HandleManualDestroyInput();
+        if (vehicleController != null && !isVehicleDestroyed) HandleDriverInput();
 
         Quaternion targetRotation = Quaternion.Euler(cameraRotation.y, cameraRotation.x, 0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, cameraSpeed * Time.deltaTime);

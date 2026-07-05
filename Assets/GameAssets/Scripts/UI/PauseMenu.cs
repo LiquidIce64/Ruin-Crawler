@@ -7,6 +7,7 @@ public class PauseMenu : MonoBehaviour
     public bool PauseGame;
     public GameObject pauseGameMenu;
     private InputSystem_Actions input;
+    private bool isLocked;
 
     private void Awake()
     {
@@ -28,12 +29,18 @@ public class PauseMenu : MonoBehaviour
 
     private void OnCancelPressed(InputAction.CallbackContext context)
     {
+        if (isLocked)
+            return;
+
         Debug.Log("Escape (Cancel) нажат!");
         TogglePause();
     }
 
     private void TogglePause()
     {
+        if (isLocked)
+            return;
+
         if (PauseGame)
         {
             Resume();
@@ -46,6 +53,9 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        if (isLocked)
+            return;
+
         pauseGameMenu.SetActive(false);
         Time.timeScale = 1f;
         PauseGame = false;
@@ -53,9 +63,21 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        if (isLocked)
+            return;
+
         pauseGameMenu.SetActive(true);
         Time.timeScale = 0f;
         PauseGame = true;
+    }
+
+    public void LockPause()
+    {
+        isLocked = true;
+        if (pauseGameMenu != null)
+            pauseGameMenu.SetActive(false);
+
+        PauseGame = false;
     }
 
     public void LoadMenu()
