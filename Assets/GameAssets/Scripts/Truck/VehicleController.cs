@@ -8,13 +8,13 @@ public class VehicleController : MonoBehaviour
     [SerializeField] private WheelCollider wheelFR;
     [SerializeField] private WheelCollider wheelBL;
     [SerializeField] private WheelCollider wheelBR;
-    [SerializeField] private Transform wheelMeshFL;
-    [SerializeField] private Transform wheelMeshFR;
-    [SerializeField] private Transform wheelMeshBL;
-    [SerializeField] private Transform wheelMeshBR;
+    private Transform wheelMeshFL;
+    private Transform wheelMeshFR;
+    private Transform wheelMeshBL;
+    private Transform wheelMeshBR;
 
-    [SerializeField] public Winch frontWinch;
-    [SerializeField] public Winch backWinch;
+    public Winch frontWinch;
+    public Winch backWinch;
 
     public UnityEvent onVehicleDestroyed = new();
 
@@ -32,35 +32,35 @@ public class VehicleController : MonoBehaviour
     private float currentBrake;
 
     [Header("Movement Config")]
-    [Range(0f, 90f)] private float maxSteerAngle = 30f;
-    private float motorTorque = 200f;
-    private float turboMultiplier = 2.0f;
-    private float brakingForce = 500f;
-    private float jumpVelocity = 9f;
-    private float swingForce = 2.2f;
+    [SerializeField][Range(0f, 90f)] private float maxSteerAngle = 30f;
+    [SerializeField] private float motorTorque = 200f;
+    [SerializeField] private float turboMultiplier = 2.0f;
+    [SerializeField] private float brakingForce = 500f;
+    [SerializeField] private float jumpVelocity = 9f;
+    [SerializeField] private float swingForce = 2.2f;
 
     [Header("Stability Config")]
-    private float centerOfMassY = -0.5f;
-    private float antiRoll = 6000f;
-    private float yawDamping = 50f;
+    [SerializeField] private float centerOfMassY = -0.5f;
+    [SerializeField] private float antiRoll = 6000f;
+    [SerializeField] private float yawDamping = 50f;
 
     [Header("Friction Config (Forward)")]
-    private float forwardExtremumSlip = 0.3f;
-    private float forwardExtremumValue = 2.2f;
-    private float forwardAsymptoteSlip = 0.7f;
-    private float forwardAsymptoteValue = 1.8f;
-    private float forwardStiffness = 2.5f;
+    [SerializeField] private float forwardExtremumSlip = 0.3f;
+    [SerializeField] private float forwardExtremumValue = 2.2f;
+    [SerializeField] private float forwardAsymptoteSlip = 0.7f;
+    [SerializeField] private float forwardAsymptoteValue = 1.8f;
+    [SerializeField] private float forwardStiffness = 2.5f;
 
     [Header("Friction Config (Sideways)")]
-    private float sidewaysExtremumSlip = 0.1f;
-    private float sidewaysExtremumValue = 1.5f;
-    private float sidewaysAsymptoteSlip = 0.4f;
-    private float sidewaysAsymptoteValue = 1.0f;
-    private float sidewaysStiffness = 2.0f;
+    [SerializeField] private float sidewaysExtremumSlip = 0.1f;
+    [SerializeField] private float sidewaysExtremumValue = 1.5f;
+    [SerializeField] private float sidewaysAsymptoteSlip = 0.4f;
+    [SerializeField] private float sidewaysAsymptoteValue = 1.0f;
+    [SerializeField] private float sidewaysStiffness = 2.0f;
 
     [Header("Hill Climbing")]
-    private float slopeAngleThreshold = 5f;
-    private float downforceCoefficient = 0.5f;
+    [SerializeField] private float slopeAngleThreshold = 5f;
+    [SerializeField] private float downforceCoefficient = 0.5f;
 
     private Rigidbody rb;
     private bool isJumping = false;
