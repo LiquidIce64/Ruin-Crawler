@@ -17,6 +17,7 @@ public class VehicleController : MonoBehaviour
     [SerializeField] public Winch backWinch;
 
     public UnityEvent onVehicleDestroyed = new();
+    private bool isDestroyed;
 
     [HideInInspector] public System.Action onJumpPerformed;
     [HideInInspector] public System.Action<bool> onTurboChanged;
@@ -104,6 +105,15 @@ public class VehicleController : MonoBehaviour
             stiffness = sidewaysStiffness
         };
         wheel.sidewaysFriction = sidewaysFriction;
+    }
+
+    public void DestroyVehicle()
+    {
+        if (isDestroyed)
+            return;
+
+        isDestroyed = true;
+        onVehicleDestroyed.Invoke();
     }
 
     public void Jump()
