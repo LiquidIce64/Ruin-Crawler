@@ -81,6 +81,11 @@ public class Winch : MonoBehaviour
 
     public void Detach()
     {
+        if (joint.connectedBody != null && joint.connectedBody.gameObject.TryGetComponent(out IWinchInteractable component))
+        {
+            component.OnDetach();
+        }
+
         pull = false;
         extend = false;
         joint.connectedBody = null;
