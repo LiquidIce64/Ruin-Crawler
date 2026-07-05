@@ -161,10 +161,6 @@ MonoBehaviour:
   wheelFR: {fileID: 8115749775994621539}
   wheelBL: {fileID: 9014232796450616606}
   wheelBR: {fileID: 6345557705569090212}
-  wheelMeshFL: {fileID: 0}
-  wheelMeshFR: {fileID: 0}
-  wheelMeshBL: {fileID: 0}
-  wheelMeshBR: {fileID: 0}
   frontWinch: {fileID: 1970242219589970756}
   backWinch: {fileID: 5628641308951178617}
   onVehicleDestroyed:
@@ -174,6 +170,27 @@ MonoBehaviour:
   jumpParticles: {fileID: 5007611334697583033}
   driverInput: {x: 0, y: 0, z: 0}
   turbo: 0
+  maxSteerAngle: 30
+  motorTorque: 200
+  turboMultiplier: 2
+  brakingForce: 500
+  jumpVelocity: 9
+  swingForce: 2.2
+  centerOfMassY: -0.5
+  antiRoll: 6000
+  yawDamping: 50
+  forwardExtremumSlip: 0.3
+  forwardExtremumValue: 2.2
+  forwardAsymptoteSlip: 0.7
+  forwardAsymptoteValue: 1.8
+  forwardStiffness: 2.5
+  sidewaysExtremumSlip: 0.1
+  sidewaysExtremumValue: 1.5
+  sidewaysAsymptoteSlip: 0.4
+  sidewaysAsymptoteValue: 1
+  sidewaysStiffness: 2
+  slopeAngleThreshold: 5
+  downforceCoefficient: 0.5
 --- !u!54 &5021227981338017016
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -211,7 +228,7 @@ SpringJoint:
   serializedVersion: 4
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0.65, z: 1.4}
+  m_Anchor: {x: 0, y: 0.85, z: 1.395}
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_Spring: 100000
@@ -235,7 +252,7 @@ SpringJoint:
   serializedVersion: 4
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0.65, z: -1.4}
+  m_Anchor: {x: 0, y: 0.85, z: -1.42815}
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}
   m_Spring: 100000
@@ -346,8 +363,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6038887029510959029}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.65, z: 1.4}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.85, z: 1.395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -753,8 +770,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7931149128705504846}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.65, z: -1.4}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.85, z: -1.42815}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10660,7 +10677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.22
+      value: 0.85
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10668,19 +10685,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071067
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -10698,6 +10715,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 9ddb611970e33cf45ba031dff8e7b485, type: 2}
+    - target: {fileID: -2224846863318215506, guid: b5306413e765d454a9a37011f6734828, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b5306413e765d454a9a37011f6734828, type: 3}
       propertyPath: m_Name
       value: Truck body
@@ -10710,7 +10731,9 @@ PrefabInstance:
       propertyPath: m_Convex
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5623676744803872014, guid: b5306413e765d454a9a37011f6734828, type: 3}
+    - {fileID: -5316703651426120661, guid: b5306413e765d454a9a37011f6734828, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
