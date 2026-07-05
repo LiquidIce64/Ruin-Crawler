@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     public System.Action onBackWinchDetached;
     public System.Action onAnyWinchPull;
 
+    private Vector2 moveControlSpeed = new(2.5f, 10f);
+    private float moveResetSpeedMult = 3f;
+    private Vector2 moveVector = Vector2.zero;
+
     [Header("Camera Settings")]
     private float cameraSensitivity = 0.5f;
     private float cameraSpeed = 10.0f;
@@ -200,7 +204,12 @@ public class PlayerController : MonoBehaviour
 
     private void HandleDriverInput()
     {
-        Vector2 moveVector = input.Player.Move.ReadValue<Vector2>();
+        Vector2 targetMoveVector = input.Player.Move.ReadValue<Vector2>();
+        Vector2 speed = moveControlSpeed;
+        if (targetMoveVector.x == 0) speed.x *= moveResetSpeedMult;
+        if (targetMoveVector.y == 0) speed.y *= moveResetSpeedMult;
+        moveVector.x = Mathf.Lerp(moveVector.x, targetMoveVector.x, speed.x * Time.deltaTime);
+        moveVector.y = Mathf.Lerp(moveVector.y, targetMoveVector.y, speed.y * Time.deltaTime);
         vehicleController.driverInput = new Vector3(moveVector.x, moveVector.y, brake ? 1f : 0f);
     }
 

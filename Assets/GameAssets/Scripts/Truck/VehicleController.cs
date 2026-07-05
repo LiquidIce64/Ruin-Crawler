@@ -35,7 +35,7 @@ public class VehicleController : MonoBehaviour
     [Range(0f, 90f)] private float maxSteerAngle = 30f;
     private float motorTorque = 200f;
     private float turboMultiplier = 2.0f;
-    private float brakingForce = 100f;
+    private float brakingForce = 500f;
     private float jumpVelocity = 9f;
     private float swingForce = 2.2f;
 
