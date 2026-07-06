@@ -209,9 +209,8 @@ GameObject:
   - component: {fileID: 7956571442694399510}
   - component: {fileID: 9100601235867935603}
   - component: {fileID: 8825829794697561227}
-  - component: {fileID: 5535404338611616226}
   - component: {fileID: 185500241040559760}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pressure Plate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,27 +288,6 @@ MonoBehaviour:
       m_Calls: []
   currentObjects: 0
   isActivated: 0
---- !u!65 &5535404338611616226
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5015734332789471154}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 0.9299145, y: 0.32270405, z: 0.9271116}
-  m_Center: {x: -0.0014019012, y: 0.16483797, z: 0}
 --- !u!65 &185500241040559760
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -329,8 +307,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6076422, y: 0.08511233, z: 0.6159363}
-  m_Center: {x: -0.0022568703, y: 0.32288122, z: -0.0014014244}
+  m_Size: {x: 0.6076422, y: 0.17008181, z: 0.6159363}
+  m_Center: {x: -0.002256866, y: 0.3653661, z: -0.0014014329}
 --- !u!1 &5675321502439534336
 GameObject:
   m_ObjectHideFlags: 0
