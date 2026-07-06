@@ -80,18 +80,6 @@ public class PauseMenu : MonoBehaviour
         PauseGame = false;
     }
 
-    public void SelectLevel()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("LevelSelection");
-    }
-
-    public void RestartLevel()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
     public void LoadMenu()
     {
         Time.timeScale = 1f;

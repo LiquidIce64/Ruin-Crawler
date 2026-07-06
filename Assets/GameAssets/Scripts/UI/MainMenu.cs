@@ -8,11 +8,6 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
-    public void SelectLevel()
-    {
-        SceneManager.LoadScene("LevelSelection");
-    }
-
     public void ExitGame()
     {
         Debug.Log("Exiting game");
