@@ -37,11 +37,6 @@ public class PlayerController : MonoBehaviour
     private bool brake = false;
     private bool isVehicleDestroyed;
 
-    private void OnValidate()
-    {
-        if (followTarget != null) transform.position = followTarget.position;
-    }
-
     private void Awake()
     {
         layerMask = LayerMask.GetMask("Default");

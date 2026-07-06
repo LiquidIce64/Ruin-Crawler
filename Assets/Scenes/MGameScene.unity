@@ -1309,7 +1309,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Test \u0410\u0411\u0412"
+  m_text: Test
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1433,6 +1433,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WinchPoint (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6651450039005581392, guid: c962e3323d2c3f1459cafcfa058bf37b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 04105b93af6fc0c459eebf604b32d6cb, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1940,6 +1944,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WinchPoint (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 6651450039005581392, guid: c962e3323d2c3f1459cafcfa058bf37b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 04105b93af6fc0c459eebf604b32d6cb, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
