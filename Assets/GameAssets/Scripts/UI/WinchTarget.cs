@@ -21,6 +21,7 @@ public class WinchTarget : MonoBehaviour
         foreach (var point in frontWinch.FindAttachmentPoints())
         {
             var screenPos = Camera.main.WorldToViewportPoint(point.position);
+            if (screenPos.z < 0f) continue;
             screenPos.z = 0f;
             screenPos -= Vector3.one / 2;
             float distance = screenPos.sqrMagnitude;
@@ -34,6 +35,7 @@ public class WinchTarget : MonoBehaviour
         foreach (var point in backWinch.FindAttachmentPoints())
         {
             var screenPos = Camera.main.WorldToViewportPoint(point.position);
+            if (screenPos.z < 0f) continue;
             screenPos.z = 0f;
             screenPos -= Vector3.one / 2;
             float distance = screenPos.sqrMagnitude;
