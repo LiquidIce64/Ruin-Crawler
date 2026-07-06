@@ -10,7 +10,7 @@ public class MainMenu : MonoBehaviour
 
     public void SelectLevel()
     {
-        SceneManager.LoadScene("LevelSelection");
+        SceneManager.LoadScene("LevelSelect");
     }
 
     public void ExitGame()
