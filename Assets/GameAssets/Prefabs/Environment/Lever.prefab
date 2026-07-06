@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4676719019117138226}
   - component: {fileID: 9192833806157813427}
   - component: {fileID: 8033288331292993072}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 5461107774284948544}
   - component: {fileID: 7255956150394346537}
   - component: {fileID: 6293916326754506690}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -231,10 +231,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LeverLogic
   animator: {fileID: 8937419800410269098}
   animParamName: IsOn
+  isButtonMode: 0
   OnActivated:
     m_PersistentCalls:
       m_Calls: []
   OnDeactivated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnToggled:
     m_PersistentCalls:
       m_Calls: []
   isOn: 0

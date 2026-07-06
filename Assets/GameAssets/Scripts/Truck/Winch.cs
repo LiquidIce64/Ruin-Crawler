@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class Winch : MonoBehaviour
 {
-    private static int layerMask;
+    private static int defaultLayerMask;
+    private static int winchLayerMask;
 
     [SerializeField] private SpringJoint joint;
     private float maxDistance = 15f;
@@ -29,7 +30,8 @@ public class Winch : MonoBehaviour
     {
         rope = transform.GetChild(0).gameObject;
         rope.SetActive(false);
-        layerMask = LayerMask.GetMask("WinchInteractable");
+        defaultLayerMask = LayerMask.GetMask("Default");
+        winchLayerMask = LayerMask.GetMask("WinchInteractable");
         joint.anchor = transform.localPosition;
         springForce = joint.spring;
         joint.spring = 0f;
@@ -37,7 +39,7 @@ public class Winch : MonoBehaviour
 
     public IEnumerable<Rigidbody> FindAttachmentPoints()
     {
-        int hits = Physics.OverlapSphereNonAlloc(transform.position, maxDistance, hitColliders, layerMask);
+        int hits = Physics.OverlapSphereNonAlloc(transform.position, maxDistance, hitColliders, winchLayerMask);
         for (int i = 0; i < hits; i++)
         {
             var rigidBody = hitColliders[i].attachedRigidbody;
@@ -46,6 +48,11 @@ public class Winch : MonoBehaviour
                 Debug.LogWarning("WinchInteractable has no attached RigidBody");
                 continue;
             }
+
+            // Check for line of sight
+            Vector3 dir = rigidBody.position - transform.position;
+            if (Physics.Raycast(transform.position, dir.normalized, dir.magnitude, defaultLayerMask)) continue;
+
             yield return rigidBody;
         }
     }

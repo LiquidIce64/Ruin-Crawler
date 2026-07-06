@@ -34,4 +34,10 @@ public class DoorLogic : MonoBehaviour
         }
         Debug.Log("Ворота: ЗАКРЫВАЮТСЯ");
     }
+
+    public void ToggleDoor()
+    {
+        if (isOpen) CloseDoor();
+        else OpenDoor();
+    }
 }

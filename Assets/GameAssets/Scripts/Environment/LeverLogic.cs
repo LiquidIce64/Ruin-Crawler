@@ -14,6 +14,7 @@ public class LeverLogic : MonoBehaviour, IWinchInteractable
     [Header("События")]
     public UnityEvent OnActivated;   // Что делаем при включении
     public UnityEvent OnDeactivated; // Что делаем при выключении
+    public UnityEvent OnToggled; // Что делаем при переключении
 
     [Header("Текущее состояние (только для просмотра)")]
     [SerializeField] private bool isOn = false;
@@ -49,6 +50,7 @@ public class LeverLogic : MonoBehaviour, IWinchInteractable
 
     private void ChangeState(bool newState)
     {
+        if (isOn != newState) OnToggled.Invoke();
         isOn = newState;
 
         if (animator != null)
