@@ -2031,6 +2031,12 @@ MonoBehaviour:
   deathScreen: {fileID: 7001000000000000005}
   pauseMenu: {fileID: 5931315181977703011}
   manualDestroyEnabled: 1
+  cameraSensitivity: 0.5
+  cameraSpeed: 10
+  zoomSensitivity: 1
+  zoomSpeed: 5
+  minCameraDistance: 4
+  maxCameraDistance: 32
 --- !u!1 &3212350900572369077
 GameObject:
   m_ObjectHideFlags: 0
@@ -5223,8 +5229,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u041C\u0430\u0448\u0438\u043D\u0430 \u0440\u0430\u0437\u044C\u0435\u0431\u0430\u043B\u0430\u0441\u044C
-    \u0432 \u0445\u043B\u0430\u043C\u0438\u043D\u0443"
+  m_text: "\u041C\u0430\u0448\u0438\u043D\u0430 \u0443\u043D\u0438\u0447\u0442\u043E\u0436\u0435\u043D\u0430"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5251,13 +5256,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46
+  m_fontSize: 80
   m_fontSizeBase: 46
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 28
-  m_fontSizeMax: 54
-  m_fontStyle: 1
+  m_fontSizeMax: 80
+  m_fontStyle: 33
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

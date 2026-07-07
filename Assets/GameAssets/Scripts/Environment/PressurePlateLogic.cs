@@ -14,6 +14,7 @@ public class PressurePlateLogic : MonoBehaviour
     [Header("События")]
     public UnityEvent OnActivated;   // Сработает, когда наберется нужное количество
     public UnityEvent OnDeactivated; // Сработает, когда предметов станет меньше
+    public UnityEvent OnToggled;
 
     [Header("Текущее состояние (только для просмотра)")]
     [SerializeField] private int currentObjects = 0;
@@ -52,6 +53,7 @@ public class PressurePlateLogic : MonoBehaviour
                 animator.SetBool(animParamName, true);
             }
 
+            OnToggled.Invoke();
             OnActivated.Invoke();
             Debug.Log($"Плита АКТИВИРОВАНА! ({currentObjects}/{requiredObjects})");
         }
@@ -65,6 +67,7 @@ public class PressurePlateLogic : MonoBehaviour
                 animator.SetBool(animParamName, false);
             }
 
+            OnToggled.Invoke();
             OnDeactivated.Invoke();
             Debug.Log($"Плита ДЕАКТИВИРОВАНА! ({currentObjects}/{requiredObjects})");
         }
