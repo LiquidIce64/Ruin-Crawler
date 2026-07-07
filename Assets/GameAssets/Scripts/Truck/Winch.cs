@@ -7,9 +7,9 @@ public class Winch : MonoBehaviour
     private static int winchLayerMask;
 
     [SerializeField] private SpringJoint joint;
-    private float maxDistance = 15f;
-    private float minDistance = 1f;
-    private float winchSpeed = 2f;
+    [SerializeField] private float maxDistance = 15f;
+    [SerializeField] private float minDistance = 1f;
+    [SerializeField] private float winchSpeed = 2f;
     private GameObject rope;
     private readonly Collider[] hitColliders = new Collider[10]; //pre-allocating memory for performance
     private float springForce;

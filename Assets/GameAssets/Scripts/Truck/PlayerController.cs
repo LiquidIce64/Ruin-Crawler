@@ -25,12 +25,12 @@ public class PlayerController : MonoBehaviour
     private Vector2 moveVector = Vector2.zero;
 
     [Header("Camera Settings")]
-    private float cameraSensitivity = 0.5f;
-    private float cameraSpeed = 10.0f;
-    private float zoomSensitivity = 1.0f;
-    private float zoomSpeed = 5.0f;
-    private float minCameraDistance = 4f;
-    private float maxCameraDistance = 16f;
+    [SerializeField] private float cameraSensitivity = 0.5f;
+    [SerializeField] private float cameraSpeed = 10.0f;
+    [SerializeField] private float zoomSensitivity = 1.0f;
+    [SerializeField] private float zoomSpeed = 5.0f;
+    [SerializeField] private float minCameraDistance = 4f;
+    [SerializeField] private float maxCameraDistance = 32f;
     private float cameraDistance;
     private Vector2 cameraRotation;
 

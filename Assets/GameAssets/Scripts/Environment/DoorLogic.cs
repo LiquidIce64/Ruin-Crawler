@@ -9,6 +9,14 @@ public class DoorLogic : MonoBehaviour
     [Header("Текущее состояние (только для просмотра)")]
     [SerializeField] private bool isOpen = false;
 
+    private void Start()
+    {
+        if (animator != null)
+        {
+            animator.SetBool(animParamName, isOpen);
+        }
+    }
+
     [ContextMenu("Открыть ворота (Тест)")]
     public void OpenDoor()
     {

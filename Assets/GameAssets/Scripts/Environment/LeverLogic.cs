@@ -48,10 +48,11 @@ public class LeverLogic : MonoBehaviour, IWinchInteractable
         }
     }
 
-    private void ChangeState(bool newState)
+    public void ChangeState(bool newState)
     {
-        if (isOn != newState) OnToggled.Invoke();
+        if (isOn == newState) return;
         isOn = newState;
+        OnToggled.Invoke();
 
         if (animator != null)
         {
