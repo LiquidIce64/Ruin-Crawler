@@ -34,34 +34,51 @@ public class VehicleController : MonoBehaviour
 
     [Header("Movement Config")]
     [SerializeField][Range(0f, 90f)] private float maxSteerAngle = 30f;
-    [SerializeField] private float motorTorque = 200f;
-    [SerializeField] private float turboMultiplier = 2.0f;
-    [SerializeField] private float brakingForce = 500f;
-    [SerializeField] private float jumpVelocity = 9f;
-    [SerializeField] private float swingForce = 2.2f;
+    private float motorTorque = 270f;
+    private float turboMultiplier = 1.8f;
+    private float brakingForce = 500f;
+    private float jumpVelocity = 10f;
+    private float swingForce = 5.7f;
+
+    [Header("Low Speed Torque Boost")]
+    private bool enableLowSpeedBoost = true;
+    private float lowSpeedThreshold = 10f;
+    private float lowSpeedTorqueFactor = 2.0f;
 
     [Header("Stability Config")]
-    [SerializeField] private float centerOfMassY = -0.5f;
-    [SerializeField] private float antiRoll = 6000f;
-    [SerializeField] private float yawDamping = 50f;
+    private float centerOfMassY = -0.5f;
+    private float antiRoll = 12000f;
+    private float yawDamping = 100f;
+
+    [Header("Rigidbody Damping")]
+    private float linearDrag = 0.3f;
+    private float angularDrag = 1.0f;
+
+    [Header("Downforce")]
+    private float downforceCoefficient = 0.5f;
+    private float lowSpeedDownforce = 5.0f;
+
+    [Header("Suspension")]
+    private float suspensionSpring = 35000f;
+    private float suspensionDamper = 4500f;
+    private float suspensionDistance = 0.3f;
 
     [Header("Friction Config (Forward)")]
-    [SerializeField] private float forwardExtremumSlip = 0.3f;
-    [SerializeField] private float forwardExtremumValue = 2.2f;
-    [SerializeField] private float forwardAsymptoteSlip = 0.7f;
-    [SerializeField] private float forwardAsymptoteValue = 1.8f;
-    [SerializeField] private float forwardStiffness = 2.5f;
+    private float forwardExtremumSlip = 0.3f;
+    private float forwardExtremumValue = 2.2f;
+    private float forwardAsymptoteSlip = 0.7f;
+    private float forwardAsymptoteValue = 1.8f;
+    private float forwardStiffness = 2.5f;
 
     [Header("Friction Config (Sideways)")]
-    [SerializeField] private float sidewaysExtremumSlip = 0.1f;
-    [SerializeField] private float sidewaysExtremumValue = 1.5f;
-    [SerializeField] private float sidewaysAsymptoteSlip = 0.4f;
-    [SerializeField] private float sidewaysAsymptoteValue = 1.0f;
-    [SerializeField] private float sidewaysStiffness = 2.0f;
+    private float sidewaysExtremumSlip = 0.1f;
+    private float sidewaysExtremumValue = 1.5f;
+    private float sidewaysAsymptoteSlip = 0.4f;
+    private float sidewaysAsymptoteValue = 1.0f;
+    private float sidewaysStiffness = 1.2f;
 
     [Header("Hill Climbing")]
-    [SerializeField] private float slopeAngleThreshold = 5f;
-    [SerializeField] private float downforceCoefficient = 0.5f;
+    private float slopeAngleThreshold = 5f;
 
     private Rigidbody rb;
     private bool isJumping = false;
@@ -78,10 +95,28 @@ public class VehicleController : MonoBehaviour
 
         rb.centerOfMass = new Vector3(0, centerOfMassY, 0);
 
+        rb.linearDamping = linearDrag;
+        rb.angularDamping = angularDrag;
+
+        ConfigureSuspension(wheelFL);
+        ConfigureSuspension(wheelFR);
+        ConfigureSuspension(wheelBL);
+        ConfigureSuspension(wheelBR);
+
         ApplyFrictionToWheel(wheelFL);
         ApplyFrictionToWheel(wheelFR);
         ApplyFrictionToWheel(wheelBL);
         ApplyFrictionToWheel(wheelBR);
+    }
+
+    private void ConfigureSuspension(WheelCollider wheel)
+    {
+        JointSpring spring = wheel.suspensionSpring;
+        spring.spring = suspensionSpring;
+        spring.damper = suspensionDamper;
+        spring.targetPosition = 0.5f;
+        wheel.suspensionSpring = spring;
+        wheel.suspensionDistance = suspensionDistance;
     }
 
     private void ApplyFrictionToWheel(WheelCollider wheel)
@@ -191,8 +226,16 @@ public class VehicleController : MonoBehaviour
                     float slopeAngle = GetSlopeAngle();
                     if (slopeAngle > slopeAngleThreshold)
                     {
-                        torque *= (slopeAngle < 20f) ? 1.5f : 2.5f;
+                        torque *= (slopeAngle < 20f) ? 1.3f : 1.8f;
                     }
+                }
+
+                if (enableLowSpeedBoost && driverInput.y > 0.1f)
+                {
+                    float speed = rb.linearVelocity.magnitude;
+                    float t = 1f - Mathf.Clamp01(speed / lowSpeedThreshold);
+                    float boost = Mathf.Lerp(1f, lowSpeedTorqueFactor, t);
+                    torque *= boost;
                 }
 
                 currentTorque = isJumping ? 0f : torque;
@@ -258,9 +301,13 @@ public class VehicleController : MonoBehaviour
 
     private void ApplyDownforce()
     {
+        if (!IsAnyWheelGrounded())
+            return;
+
         float speed = rb.linearVelocity.magnitude;
-        float downforce = speed * speed * downforceCoefficient;
-        rb.AddForce(-transform.up * downforce, ForceMode.Force);
+        float dynamicDownforce = speed * speed * downforceCoefficient;
+        float staticDownforce = lowSpeedDownforce * rb.mass * Mathf.Max(0f, 1f - (speed / lowSpeedThreshold));
+        rb.AddForce(-transform.up * (dynamicDownforce + staticDownforce), ForceMode.Force);
     }
 
     private void ApplyAntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
