@@ -6,8 +6,16 @@ public class DoorLogic : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private string animParamName = "IsOpen";
 
-    [Header("Текущее состояние (только для просмотра)")]
+    [Header("Текущее состояние (не только для просмотра)")]
     [SerializeField] private bool isOpen = false;
+
+    private void Start()
+    {
+        if (animator != null)
+        {
+            animator.SetBool(animParamName, isOpen);
+        }
+    }
 
     [ContextMenu("Открыть ворота (Тест)")]
     public void OpenDoor()
@@ -33,5 +41,11 @@ public class DoorLogic : MonoBehaviour
             animator.SetBool(animParamName, false);
         }
         Debug.Log("Ворота: ЗАКРЫВАЮТСЯ");
+    }
+
+    public void ToggleDoor()
+    {
+        if (isOpen) CloseDoor();
+        else OpenDoor();
     }
 }

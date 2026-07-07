@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 439516310653078524, guid: 7a2019210606fa84a8bf30070f66a952, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7a2019210606fa84a8bf30070f66a952, type: 3}
       propertyPath: m_Name
       value: _Gate
@@ -80,6 +84,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7a2019210606fa84a8bf30070f66a952, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2963633300813901844}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7a2019210606fa84a8bf30070f66a952, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -391945416882835626}
   m_SourcePrefab: {fileID: 100100000, guid: 7a2019210606fa84a8bf30070f66a952, type: 3}
 --- !u!1 &861360046714180014 stripped
 GameObject:
@@ -123,3 +130,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!64 &-391945416882835626
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861360046714180014}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}

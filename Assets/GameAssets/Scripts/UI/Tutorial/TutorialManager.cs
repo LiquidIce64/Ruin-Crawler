@@ -10,7 +10,9 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private TMP_Text messageText;
     [SerializeField] private UnityEngine.UI.Image keyImage;
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private float fadeDuration = 2f;
+
+    [SerializeField] private float fadeInDuration = 1f;
+    [SerializeField] private float fadeOutDuration = 2f;
 
     [SerializeField] private TutorialStep[] steps;
 
@@ -22,6 +24,8 @@ public class TutorialManager : MonoBehaviour
 
     private bool jumpDone = false;
     private bool winchPulled = false;
+    private bool winchExtended = false;
+    private bool stepCompletedFlag = false;
 
     private void Awake()
     {
@@ -61,6 +65,26 @@ public class TutorialManager : MonoBehaviour
                 case "pull_winch":
                     playerController.onAnyWinchPull += () => winchPulled = true;
                     step.completionCondition = () => winchPulled;
+                    break;
+                case "swing_winch":
+                    step.completionCondition = () =>
+                        (vehicleController.frontWinch.IsAttached || vehicleController.backWinch.IsAttached) &&
+                        !vehicleController.IsAnyWheelGrounded() &&
+                        (Mathf.Abs(vehicleController.driverInput.x) > 0.01f || Mathf.Abs(vehicleController.driverInput.y) > 0.01f);
+                    break;
+                case "loose_winch":
+                    playerController.onAnyWinchExtend += () => winchExtended = true;
+                    step.completionCondition = () => winchExtended;
+                    break;
+                case "attach_movable":
+                    step.completionCondition = () =>
+                        (vehicleController.frontWinch.IsAttached &&
+                         vehicleController.frontWinch.ConnectedBody != null &&
+                         vehicleController.frontWinch.ConnectedBody.GetComponent<MovableObject>() != null)
+                        ||
+                        (vehicleController.backWinch.IsAttached &&
+                         vehicleController.backWinch.ConnectedBody != null &&
+                         vehicleController.backWinch.ConnectedBody.GetComponent<MovableObject>() != null);
                     break;
             }
         }
@@ -103,12 +127,46 @@ public class TutorialManager : MonoBehaviour
     private void ShowStep(TutorialStep step)
     {
         currentStep = step;
+        stepCompletedFlag = false;
         messageText.text = step.message;
         if (keyImage != null) keyImage.sprite = step.keyIcon;
 
         StopAllCoroutines();
         tutorialPanel.SetActive(true);
-        StartCoroutine(FadeIn());
+        StartCoroutine(ShowRoutine());
+    }
+
+    private System.Collections.IEnumerator ShowRoutine()
+    {
+        float t = 0f;
+        canvasGroup.alpha = 0f;
+        while (t < fadeInDuration)
+        {
+            t += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(0f, 1f, t / fadeInDuration);
+            yield return null;
+        }
+        canvasGroup.alpha = 1f;
+
+        while (!stepCompletedFlag)
+        {
+            yield return null;
+        }
+
+        t = 0f;
+        float startAlpha = canvasGroup.alpha;
+        while (t < fadeOutDuration)
+        {
+            t += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, t / fadeOutDuration);
+            yield return null;
+        }
+        canvasGroup.alpha = 0f;
+        tutorialPanel.SetActive(false);
+
+        currentStep.isCompleted = true;
+        currentStep = null;
+        TryShowNextStep();
     }
 
     private void Update()
@@ -117,48 +175,13 @@ public class TutorialManager : MonoBehaviour
         {
             if (currentStep.completionCondition.Invoke())
             {
-                currentStep.isCompleted = true;
-                HidePanel();
-                currentStep = null;
-                TryShowNextStep();
+                stepCompletedFlag = true;
             }
         }
         else if (currentStep == null && stepQueue.Count > 0)
         {
             TryShowNextStep();
         }
-    }
-
-    private System.Collections.IEnumerator FadeIn()
-    {
-        float t = 0f;
-        canvasGroup.alpha = 0f;
-        while (t < fadeDuration)
-        {
-            t += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(0f, 1f, t / fadeDuration);
-            yield return null;
-        }
-        canvasGroup.alpha = 1f;
-    }
-
-    private void HidePanel()
-    {
-        StopAllCoroutines();
-        StartCoroutine(FadeOut());
-    }
-
-    private System.Collections.IEnumerator FadeOut()
-    {
-        float t = 0f;
-        float startAlpha = canvasGroup.alpha;
-        while (t < fadeDuration)
-        {
-            t += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, t / fadeDuration);
-            yield return null;
-        }
-        tutorialPanel.SetActive(false);
     }
 
     private void HidePanelInstant()
