@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 80e65e5d46ca91848863d7c71b78919d
+guid: 325b48b14c07f9346a02bfe22313ee69
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: LeverAnimation
-      takeName: Cube.003|Cube.003Action
-      internalID: -8906869970063597199
+      name: GateWithLogoAction
+      takeName: Cube|CubeAction
+      internalID: -3999578356269874737
       firstFrame: 0
-      lastFrame: 10
+      lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
