@@ -133,7 +133,7 @@ public class VehicleController : MonoBehaviour
         }
     }
 
-    private bool IsAnyWheelGrounded()
+    public bool IsAnyWheelGrounded()
     {
         return wheelFL.isGrounded || wheelFR.isGrounded || wheelBL.isGrounded || wheelBR.isGrounded;
     }

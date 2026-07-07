@@ -6,7 +6,7 @@ public class DoorLogic : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private string animParamName = "IsOpen";
 
-    [Header("Текущее состояние (только для просмотра)")]
+    [Header("Текущее состояние (не только для просмотра)")]
     [SerializeField] private bool isOpen = false;
 
     private void Start()

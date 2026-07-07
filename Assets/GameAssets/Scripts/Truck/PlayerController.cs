@@ -19,18 +19,19 @@ public class PlayerController : MonoBehaviour
     public System.Action onFrontWinchDetached;
     public System.Action onBackWinchDetached;
     public System.Action onAnyWinchPull;
+    public System.Action onAnyWinchExtend;
 
     private Vector2 moveControlSpeed = new(2.5f, 10f);
     private float moveResetSpeedMult = 3f;
     private Vector2 moveVector = Vector2.zero;
 
     [Header("Camera Settings")]
-    [SerializeField] private float cameraSensitivity = 0.5f;
-    [SerializeField] private float cameraSpeed = 10.0f;
-    [SerializeField] private float zoomSensitivity = 1.0f;
-    [SerializeField] private float zoomSpeed = 5.0f;
-    [SerializeField] private float minCameraDistance = 4f;
-    [SerializeField] private float maxCameraDistance = 32f;
+    private float cameraSensitivity = 0.5f;
+    private float cameraSpeed = 10.0f;
+    private float zoomSensitivity = 1.0f;
+    private float zoomSpeed = 5.0f;
+    private float minCameraDistance = 4f;
+    private float maxCameraDistance = 32f;
     private float cameraDistance;
     private Vector2 cameraRotation;
 
@@ -142,11 +143,24 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if (context.started && !vehicleController.frontWinch.IsAttached)
+            {
+                if (winchTarget != null && winchTarget.FrontWinchAvailable)
+                {
+                    vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
+                    onFrontWinchAttached?.Invoke();
+                }
+            }
+
             bool ctrl = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
             if (ctrl)
             {
                 vehicleController.frontWinch.extend = context.started;
                 vehicleController.frontWinch.pull = false;
+                if (context.started)
+                {
+                    onAnyWinchExtend?.Invoke();
+                }
             }
             else
             {
@@ -179,11 +193,24 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if (context.started && !vehicleController.backWinch.IsAttached)
+            {
+                if (winchTarget != null && winchTarget.BackWinchAvailable)
+                {
+                    vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
+                    onBackWinchAttached?.Invoke();
+                }
+            }
+
             bool ctrl = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
             if (ctrl)
             {
                 vehicleController.backWinch.extend = context.started;
                 vehicleController.backWinch.pull = false;
+                if (context.started)
+                {
+                    onAnyWinchExtend?.Invoke();
+                }
             }
             else
             {
