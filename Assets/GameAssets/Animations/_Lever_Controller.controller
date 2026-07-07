@@ -49,7 +49,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -8906869970063597199, guid: 80e65e5d46ca91848863d7c71b78919d, type: 3}
+  m_Motion: {fileID: 6712369695479197947, guid: c6d685065c767194da5d1274feedd198, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -76,7 +76,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -8906869970063597199, guid: 80e65e5d46ca91848863d7c71b78919d, type: 3}
+  m_Motion: {fileID: 6712369695479197947, guid: c6d685065c767194da5d1274feedd198, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -113,7 +113,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Lever_Controller
+  m_Name: _Lever_Controller
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: IsOn
