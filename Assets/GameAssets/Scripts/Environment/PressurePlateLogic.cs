@@ -20,24 +20,25 @@ public class PressurePlateLogic : MonoBehaviour
     [SerializeField] private int currentObjects = 0;
     [SerializeField] private bool isActivated = false;
 
+    // Кэшируем ID слоя, чтобы не искать его каждый кадр
+    private int winchLayerId;
+
+    private void Start()
+    {
+        winchLayerId = LayerMask.NameToLayer("WinchInteractable");
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // Проверяем, находится ли объект на слое WinchInteractable
-        if (other.gameObject.layer == LayerMask.NameToLayer("WinchInteractable"))
-        {
-            currentObjects++;
-            CheckState();
-        }
+        currentObjects++;
+        CheckState();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("WinchInteractable"))
-        {
-            currentObjects--;
-            if (currentObjects < 0) currentObjects = 0; // Защита от багов
-            CheckState();
-        }
+        currentObjects--;
+        if (currentObjects < 0) currentObjects = 0; // Защита от багов
+        CheckState();
     }
 
     private void CheckState()
@@ -74,7 +75,8 @@ public class PressurePlateLogic : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("WinchInteractable"))
+        // "Магнитим" только объекты, чтобы машина не застряла на плите
+        if (other.gameObject.layer == winchLayerId)
         {
             Rigidbody rb = other.attachedRigidbody;
             if (rb != null)

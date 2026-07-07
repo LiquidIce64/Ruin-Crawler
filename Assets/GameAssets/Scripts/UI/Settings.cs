@@ -12,6 +12,8 @@ public class Settings : MonoBehaviour
     public TMP_Dropdown resolutionDropdown;
     public Slider volumeSlider;
     public Toggle fullscreenToggle;
+    public Toggle hintsShownToggle;
+    public GameObject hintsPanel;
 
     float currentVolume;
     Resolution[] resolutions;
@@ -55,6 +57,15 @@ public class Settings : MonoBehaviour
             fullscreenToggle.isOn = isFullscreen;
     }
 
+    public void SetHintsShown(bool hintsShown)
+    {
+        if (hintsShownToggle != null)
+            hintsShownToggle.isOn = hintsShown;
+
+        if (hintsPanel != null)
+            hintsPanel.SetActive(hintsShown);
+    }
+
     public void SetResolution(int resolutionIndex)
     {
         Resolution resolution = resolutions[resolutionIndex];
@@ -75,6 +86,7 @@ public class Settings : MonoBehaviour
     {
         PlayerPrefs.SetInt("ResolutionPreference", resolutionDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference", System.Convert.ToInt32(fullscreenToggle.isOn));
+        PlayerPrefs.SetInt("HintsShownPreference", System.Convert.ToInt32(hintsShownToggle.isOn));
         PlayerPrefs.SetFloat("VolumePreference", currentVolume);
 
         PlayerPrefs.Save();
@@ -98,6 +110,15 @@ public class Settings : MonoBehaviour
 
         if (fullscreenToggle != null)
             fullscreenToggle.isOn = fullscreenValue;
+
+        bool hintsShownValue;
+
+        if (PlayerPrefs.HasKey("HintsShownPreference"))
+            hintsShownValue = System.Convert.ToBoolean(PlayerPrefs.GetInt("HintsShownPreference"));
+        else
+            hintsShownValue = true;
+
+        SetHintsShown(hintsShownValue);
 
         if (PlayerPrefs.HasKey("VolumePreference"))
             volumeSlider.value = PlayerPrefs.GetFloat("VolumePreference");
@@ -127,5 +148,14 @@ public class Settings : MonoBehaviour
         SetResolution(resolutionDropdown.value);
         SetVolume(volumeSlider.value);
         SetFullscreen(fullscreenToggle.isOn);
+        SetHintsShown(hintsShownToggle.isOn);
+    }
+
+    public bool GetHintsShown()
+    {
+        if (PlayerPrefs.HasKey("HintsShownPreference"))
+            return System.Convert.ToBoolean(PlayerPrefs.GetInt("HintsShownPreference"));
+
+        return true;
     }
 }
