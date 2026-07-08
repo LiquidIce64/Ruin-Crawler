@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -13,6 +14,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private DeathScreen deathScreen;
     [SerializeField] private PauseMenu pauseMenu;
     [SerializeField] private bool manualDestroyEnabled = true;
+
+    [SerializeField] private List<Material> ditherFade;
+    [SerializeField] private float fadeStart = 6f;
+    [SerializeField] private float fadeEnd = 1f;
 
     public System.Action onFrontWinchAttached;
     public System.Action onBackWinchAttached;
@@ -112,6 +117,8 @@ public class PlayerController : MonoBehaviour
     {
         if (vehicleController != null)
             vehicleController.onVehicleDestroyed.RemoveListener(OnVehicleDestroyed);
+
+        foreach (var mat in ditherFade) mat.SetFloat("_Fade", 0f);
     }
 
     private void OnBrakeStarted(InputAction.CallbackContext context) => brake = true;
@@ -312,6 +319,10 @@ public class PlayerController : MonoBehaviour
 
         if (winchTarget != null)
             winchTarget.HandleUpdate(vehicleController.frontWinch, vehicleController.backWinch);
+
+        float fadeFactor = Mathf.InverseLerp(fadeStart, fadeEnd, newDist);
+        fadeFactor = Mathf.Clamp(fadeFactor, 0f, 1f);
+        foreach (var mat in ditherFade) mat.SetFloat("_Fade", fadeFactor);
     }
 
     public void SetCameraSensitivity(float value)
