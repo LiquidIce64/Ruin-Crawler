@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class DoorLogic : MonoBehaviour
 {
@@ -6,8 +7,13 @@ public class DoorLogic : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private string animParamName = "IsOpen";
 
-    [Header("Текущее состояние (не только для просмотра)")]
+    [Header("Текущее состояние")]
     [SerializeField] private bool isOpen = false;
+
+    [Header("Время движения")]
+    [SerializeField] private float animationDuration = 1.5f;
+
+    private bool isMoving = false;
 
     private void Start()
     {
@@ -20,32 +26,41 @@ public class DoorLogic : MonoBehaviour
     [ContextMenu("Открыть ворота (Тест)")]
     public void OpenDoor()
     {
-        if (isOpen) return;
-        isOpen = true;
+        // Если дверь уже открыта или она сейчас в процессе движения - игнорируем клик
+        if (isOpen || isMoving) return;
 
-        if (animator != null)
-        {
-            animator.SetBool(animParamName, true);
-        }
-        Debug.Log("Ворота: ОТКРЫВАЮТСЯ");
+        StartCoroutine(DoorMovementRoutine(true));
     }
 
     [ContextMenu("Закрыть ворота (Тест)")]
     public void CloseDoor()
     {
-        if (!isOpen) return;
-        isOpen = false;
+        if (!isOpen || isMoving) return;
 
-        if (animator != null)
-        {
-            animator.SetBool(animParamName, false);
-        }
-        Debug.Log("Ворота: ЗАКРЫВАЮТСЯ");
+        StartCoroutine(DoorMovementRoutine(false));
     }
 
     public void ToggleDoor()
     {
         if (isOpen) CloseDoor();
         else OpenDoor();
+    }
+
+    private IEnumerator DoorMovementRoutine(bool targetState)
+    {
+        isMoving = true;
+        isOpen = targetState;
+
+        if (animator != null)
+        {
+            animator.SetBool(animParamName, targetState);
+        }
+
+        Debug.Log(targetState ? "Ворота: ОТКРЫВАЮТСЯ" : "Ворота: ЗАКРЫВАЮТСЯ");
+
+        // Ждем ровно столько секунд, сколько длится анимация
+        yield return new WaitForSeconds(animationDuration);
+
+        isMoving = false;
     }
 }

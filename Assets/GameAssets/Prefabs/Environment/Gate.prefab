@@ -48,6 +48,7 @@ MonoBehaviour:
   animator: {fileID: 1007227283520022389}
   animParamName: IsOpen
   isOpen: 0
+  animationDuration: 0.83
 --- !u!1001 &5140741728505358957
 PrefabInstance:
   m_ObjectHideFlags: 0
