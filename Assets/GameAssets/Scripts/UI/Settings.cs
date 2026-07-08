@@ -13,9 +13,15 @@ public class Settings : MonoBehaviour
     public Slider volumeSlider;
     public Toggle fullscreenToggle;
     public Toggle hintsShownToggle;
+    public Slider cameraSensitivitySlider;
+    public Slider zoomSensitivitySlider;
+
     public GameObject hintsPanel;
+    public PlayerController playerController;
 
     float currentVolume;
+    float currentCameraSensitivity;
+    float currentZoomSensitivity;
     Resolution[] resolutions;
 
     void Start()
@@ -46,7 +52,8 @@ public class Settings : MonoBehaviour
     public void SetVolume(float volume)
     {
         currentVolume = volume;
-        audioMixer.SetFloat("Volume", volume);
+        if (audioMixer != null)
+            audioMixer.SetFloat("Volume", volume);
     }
 
     public void SetFullscreen(bool isFullscreen)
@@ -82,12 +89,30 @@ public class Settings : MonoBehaviour
         QualitySettings.SetQualityLevel(qualityIndex);
     }
 
+    public void SetCameraSensitivity(float sensitivity)
+    {
+        currentCameraSensitivity = sensitivity;
+
+        if (playerController != null)
+            playerController.SetCameraSensitivity(sensitivity);
+    }
+
+    public void SetZoomSensitivity(float sensitivity)
+    {
+        currentZoomSensitivity = sensitivity;
+
+        if (playerController != null)
+            playerController.SetZoomSensitivity(sensitivity);
+    }
+
     public void SaveSettings()
     {
         PlayerPrefs.SetInt("ResolutionPreference", resolutionDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference", System.Convert.ToInt32(fullscreenToggle.isOn));
         PlayerPrefs.SetInt("HintsShownPreference", System.Convert.ToInt32(hintsShownToggle.isOn));
         PlayerPrefs.SetFloat("VolumePreference", currentVolume);
+        PlayerPrefs.SetFloat("CameraSensitivityPreference", currentCameraSensitivity);
+        PlayerPrefs.SetFloat("ZoomSensitivityPreference", currentZoomSensitivity);
 
         PlayerPrefs.Save();
     }
@@ -124,6 +149,22 @@ public class Settings : MonoBehaviour
             volumeSlider.value = PlayerPrefs.GetFloat("VolumePreference");
         else
             volumeSlider.value = 100f;
+
+        SetVolume(volumeSlider.value);
+
+        if (PlayerPrefs.HasKey("CameraSensitivityPreference"))
+            cameraSensitivitySlider.value = PlayerPrefs.GetFloat("CameraSensitivityPreference");
+        else
+            cameraSensitivitySlider.value = 0.5f;
+
+        SetCameraSensitivity(cameraSensitivitySlider.value);
+
+        if (PlayerPrefs.HasKey("ZoomSensitivityPreference"))
+            zoomSensitivitySlider.value = PlayerPrefs.GetFloat("ZoomSensitivityPreference");
+        else
+            zoomSensitivitySlider.value = 1.0f;
+        
+        SetZoomSensitivity(zoomSensitivitySlider.value);
     }
 
     public void RevertUnsavedSettings()
@@ -149,6 +190,8 @@ public class Settings : MonoBehaviour
         SetVolume(volumeSlider.value);
         SetFullscreen(fullscreenToggle.isOn);
         SetHintsShown(hintsShownToggle.isOn);
+        SetCameraSensitivity(cameraSensitivitySlider.value);
+        SetZoomSensitivity(zoomSensitivitySlider.value);
     }
 
     public bool GetHintsShown()

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8543353484e665844b46315593d0c899
+guid: 44c2d0f09fa1bfd4da516e3c1dd20491
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -143,5 +143,5 @@ AssetOrigin:
   productId: 285953
   packageName: Game Input Controller Icons Free
   packageVersion: 1.0
-  assetPath: Assets/GameAssets/Images/GameInputControllerIcons/keyboard/keyboard-outlined/keyboard-arrows.png
+  assetPath: Assets/GameAssets/Images/GameInputControllerIcons/keyboard/keyboard-outlined/r.png
   uploadId: 732895
