@@ -3,14 +3,14 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    private const string tutorialScene = "MGameScene";
+
     public void PlayGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-    }
-
-    public void SelectLevel()
-    {
-        SceneManager.LoadScene("LevelSelect");
+        if (SaveManager.saveData.completedLevels.Contains(tutorialScene))
+            SceneManager.LoadScene("LevelSelect");
+        else
+            SceneManager.LoadScene(tutorialScene);
     }
 
     public void ExitGame()
