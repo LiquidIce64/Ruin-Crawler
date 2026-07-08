@@ -38,6 +38,9 @@ public class PlayerController : MonoBehaviour
     private bool brake = false;
     private bool isVehicleDestroyed;
 
+    private const string CameraSensitivityPreference = "CameraSensitivityPreference";
+    private const string ZoomSensitivityPreference = "ZoomSensitivityPreference";
+
     private void OnValidate()
     {
         if (followTarget != null) transform.position = followTarget.position;
@@ -53,6 +56,8 @@ public class PlayerController : MonoBehaviour
         cameraRotation.x = euler.y;
         cameraRotation.y = euler.x;
         cameraDistance = Mathf.Clamp(-orbitCamera.transform.localPosition.z, minCameraDistance, maxCameraDistance);
+        
+        LoadCameraSettings();
 
         vehicleController.onVehicleDestroyed.AddListener(OnVehicleDestroyed);
     }
@@ -308,4 +313,21 @@ public class PlayerController : MonoBehaviour
         if (winchTarget != null)
             winchTarget.HandleUpdate(vehicleController.frontWinch, vehicleController.backWinch);
     }
+
+    public void SetCameraSensitivity(float value)
+    {
+        cameraSensitivity = value;
+    }
+
+    public void SetZoomSensitivity(float value)
+    {
+        zoomSensitivity = value;
+    }
+
+    private void LoadCameraSettings()
+    {
+        cameraSensitivity = PlayerPrefs.GetFloat(CameraSensitivityPreference, 0.5f);
+        zoomSensitivity = PlayerPrefs.GetFloat(ZoomSensitivityPreference, 1.0f);
+    }
+
 }
