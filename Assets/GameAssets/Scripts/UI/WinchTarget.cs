@@ -18,8 +18,9 @@ public class WinchTarget : MonoBehaviour
         attachmentPoint = null;
         float closestDistance = 0f;
         Vector3 closestScreenPos = Vector3.zero;
-        foreach (var point in frontWinch.FindAttachmentPoints())
+        if (!frontWinch.IsAttached) foreach (var point in frontWinch.FindAttachmentPoints())
         {
+            if (point == backWinch.ConnectedBody) continue;
             var screenPos = Camera.main.WorldToViewportPoint(point.position);
             if (screenPos.z < 0f) continue;
             screenPos.z = 0f;
@@ -32,8 +33,9 @@ public class WinchTarget : MonoBehaviour
                 closestScreenPos = screenPos;
             }
         }
-        foreach (var point in backWinch.FindAttachmentPoints())
+        if (!backWinch.IsAttached) foreach (var point in backWinch.FindAttachmentPoints())
         {
+            if (point == frontWinch.ConnectedBody) continue;
             var screenPos = Camera.main.WorldToViewportPoint(point.position);
             if (screenPos.z < 0f) continue;
             screenPos.z = 0f;
