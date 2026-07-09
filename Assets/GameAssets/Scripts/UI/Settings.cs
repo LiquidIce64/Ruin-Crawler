@@ -9,6 +9,7 @@ public class Settings : MonoBehaviour
 {
     public AudioMixer audioMixer;
     public TMP_Dropdown resolutionDropdown;
+    public TMP_Dropdown languageDropdown;
     public Slider masterVolumeSlider;
     public Slider soundVolumeSlider;
     public Slider musicVolumeSlider;
@@ -22,6 +23,7 @@ public class Settings : MonoBehaviour
 
     float currentCameraSensitivity;
     float currentZoomSensitivity;
+    int currentLanguageIndex = LocalizationManager.RussianLanguageIndex;
     Resolution[] resolutions;
 
     void Start()
@@ -46,6 +48,7 @@ public class Settings : MonoBehaviour
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.RefreshShownValue();
 
+        InitializeLanguageDropdown();
         LoadSettings(currentResolutionIndex);
     }
 
@@ -91,6 +94,18 @@ public class Settings : MonoBehaviour
         QualitySettings.SetQualityLevel(qualityIndex);
     }
 
+    public void SetLanguage(int languageIndex)
+    {
+        currentLanguageIndex = Mathf.Clamp(
+            languageIndex,
+            LocalizationManager.EnglishLanguageIndex,
+            LocalizationManager.RussianLanguageIndex
+        );
+
+        LocalizationManager.SetLanguage(currentLanguageIndex);
+        RefreshLanguageDropdownValue();
+    }
+
     public void SetCameraSensitivity(float sensitivity)
     {
         currentCameraSensitivity = sensitivity;
@@ -112,6 +127,7 @@ public class Settings : MonoBehaviour
         PlayerPrefs.SetInt("ResolutionPreference", resolutionDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference", System.Convert.ToInt32(fullscreenToggle.isOn));
         PlayerPrefs.SetInt("HintsShownPreference", System.Convert.ToInt32(hintsShownToggle.isOn));
+        LocalizationManager.SaveCurrentLanguage();
 
         audioMixer.GetFloat("Master Volume", out float volume);
         PlayerPrefs.SetFloat("MasterVolumePreference", volume);
@@ -153,6 +169,12 @@ public class Settings : MonoBehaviour
             hintsShownValue = true;
 
         SetHintsShown(hintsShownValue);
+
+        int languageValue = PlayerPrefs.GetInt(
+            LocalizationManager.LanguagePreferenceKey,
+            LocalizationManager.RussianLanguageIndex
+        );
+        SetLanguage(languageValue);
 
         if (PlayerPrefs.HasKey("MasterVolumePreference"))
             masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolumePreference");
@@ -215,8 +237,80 @@ public class Settings : MonoBehaviour
         SetMusicVolume(musicVolumeSlider.value);
         SetFullscreen(fullscreenToggle.isOn);
         SetHintsShown(hintsShownToggle.isOn);
+        SetLanguage(currentLanguageIndex);
         SetCameraSensitivity(cameraSensitivitySlider.value);
         SetZoomSensitivity(zoomSensitivitySlider.value);
+    }
+
+    public static string GetLanguageCode()
+    {
+        return LocalizationManager.CurrentLanguageCode;
+    }
+
+    private void InitializeLanguageDropdown()
+    {
+        if (languageDropdown == null)
+            languageDropdown = CreateLanguageDropdown();
+
+        if (languageDropdown == null)
+            return;
+
+        languageDropdown.ClearOptions();
+        languageDropdown.AddOptions(new List<string> { "English", "Русский" });
+        languageDropdown.SetValueWithoutNotify(PlayerPrefs.GetInt(
+            LocalizationManager.LanguagePreferenceKey,
+            LocalizationManager.RussianLanguageIndex
+        ));
+        languageDropdown.RefreshShownValue();
+        languageDropdown.onValueChanged.RemoveListener(SetLanguage);
+        languageDropdown.onValueChanged.AddListener(SetLanguage);
+    }
+
+    private TMP_Dropdown CreateLanguageDropdown()
+    {
+        if (resolutionDropdown == null)
+            return null;
+
+        Transform parent = resolutionDropdown.transform.parent;
+        TMP_Dropdown dropdown = Instantiate(resolutionDropdown, parent);
+        dropdown.name = "LanguageDropdown";
+        dropdown.onValueChanged = new TMP_Dropdown.DropdownEvent();
+        dropdown.GetComponent<RectTransform>().anchoredPosition += new Vector2(0f, -14f);
+
+        CreateLanguageLabel(parent);
+
+        return dropdown;
+    }
+
+    private void CreateLanguageLabel(Transform parent)
+    {
+        TextMeshProUGUI resolutionLabel = null;
+
+        foreach (TextMeshProUGUI text in parent.GetComponentsInChildren<TextMeshProUGUI>(true))
+        {
+            if (text.name == "ResolutionText")
+            {
+                resolutionLabel = text;
+                break;
+            }
+        }
+
+        if (resolutionLabel == null)
+            return;
+
+        TextMeshProUGUI label = Instantiate(resolutionLabel, parent);
+        label.name = "LanguageText";
+        label.text = "ЯЗЫК";
+        label.rectTransform.anchoredPosition += new Vector2(0f, -14f);
+    }
+
+    private void RefreshLanguageDropdownValue()
+    {
+        if (languageDropdown == null)
+            return;
+
+        languageDropdown.SetValueWithoutNotify(currentLanguageIndex);
+        languageDropdown.RefreshShownValue();
     }
 
     public bool GetHintsShown()

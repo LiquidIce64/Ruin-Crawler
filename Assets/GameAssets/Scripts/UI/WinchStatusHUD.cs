@@ -102,9 +102,9 @@ public class WinchStatusHUD : MonoBehaviour
         layout.childForceExpandHeight = false;
 
         TMP_Text keyText = CreateKeycap(slot.transform, key);
-        TMP_Text titleText = CreateText(slot.transform, "Title", title, 17f, FontStyles.Bold, 76f);
+        TMP_Text titleText = CreateText(slot.transform, "Title", LocalizationManager.Translate(title), 17f, FontStyles.Bold, 76f);
         Image marker = CreateMarker(slot.transform);
-        TMP_Text statusText = CreateText(slot.transform, "Status", DetachedText, 16f, FontStyles.Normal, 104f);
+        TMP_Text statusText = CreateText(slot.transform, "Status", LocalizationManager.Translate(DetachedText), 16f, FontStyles.Normal, 104f);
 
         return new WinchSlotUi
         {
@@ -113,6 +113,7 @@ public class WinchStatusHUD : MonoBehaviour
             KeyText = keyText,
             TitleText = titleText,
             StatusText = statusText,
+            RussianTitleText = title,
         };
     }
 
@@ -186,7 +187,8 @@ public class WinchStatusHUD : MonoBehaviour
         cachedAttached = attached;
         slot.Background.color = attached ? ConnectedSlotColor : DetachedSlotColor;
         slot.Marker.color = attached ? ConnectedMarkerColor : DetachedMarkerColor;
-        slot.StatusText.text = attached ? ConnectedText : DetachedText;
+        slot.StatusText.text = LocalizationManager.Translate(attached ? ConnectedText : DetachedText);
+        slot.TitleText.text = LocalizationManager.Translate(slot.RussianTitleText);
         slot.StatusText.color = attached ? ConnectedTextColor : DetachedTextColor;
         slot.TitleText.color = attached ? ConnectedTextColor : DetachedTextColor;
         slot.KeyText.color = attached ? ConnectedTextColor : DetachedTextColor;
@@ -207,5 +209,6 @@ public class WinchStatusHUD : MonoBehaviour
         public TMP_Text KeyText;
         public TMP_Text TitleText;
         public TMP_Text StatusText;
+        public string RussianTitleText;
     }
 }
