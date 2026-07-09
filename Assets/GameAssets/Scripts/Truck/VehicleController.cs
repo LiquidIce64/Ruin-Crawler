@@ -37,7 +37,7 @@ public class VehicleController : MonoBehaviour
     private float motorTorque = 440f;
     private float turboMultiplier = 1.8f;
     private float brakingForce = 800f;
-    private float jumpVelocity = 11f;
+    private float jumpVelocity = 8.25f;
     private float swingForce = 5.75f;
 
     [Header("Audio")]
@@ -188,9 +188,9 @@ public class VehicleController : MonoBehaviour
 
     public void Jump()
     {
-        if (IsAnyWheelGrounded())
+        if (IsAnyWheelGrounded() && !isJumping)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
+            rb.AddForce(transform.up * jumpVelocity, ForceMode.VelocityChange);
             isJumping = true;
             jumpTimer = jumpDuration;
 
