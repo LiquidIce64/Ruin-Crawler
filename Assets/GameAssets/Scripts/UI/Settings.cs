@@ -1,16 +1,17 @@
-using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using TMPro;
 
 public class Settings : MonoBehaviour
 {
     public AudioMixer audioMixer;
     public TMP_Dropdown resolutionDropdown;
-    public Slider volumeSlider;
+    public Slider masterVolumeSlider;
+    public Slider soundVolumeSlider;
+    public Slider musicVolumeSlider;
     public Toggle fullscreenToggle;
     public Toggle hintsShownToggle;
     public Slider cameraSensitivitySlider;
@@ -19,7 +20,6 @@ public class Settings : MonoBehaviour
     public GameObject hintsPanel;
     public PlayerController playerController;
 
-    float currentVolume;
     float currentCameraSensitivity;
     float currentZoomSensitivity;
     Resolution[] resolutions;
@@ -49,12 +49,14 @@ public class Settings : MonoBehaviour
         LoadSettings(currentResolutionIndex);
     }
 
-    public void SetVolume(float volume)
+    private void SetVolume(float volume, string param)
     {
-        currentVolume = volume;
         if (audioMixer != null)
-            audioMixer.SetFloat("Volume", volume);
+            audioMixer.SetFloat(param, volume);
     }
+    public void SetMasterVolume(float volume) => SetVolume(volume, "Master Volume");
+    public void SetSoundVolume(float volume) => SetVolume(volume, "Sound Volume");
+    public void SetMusicVolume(float volume) => SetVolume(volume, "Music Volume");
 
     public void SetFullscreen(bool isFullscreen)
     {
@@ -110,7 +112,14 @@ public class Settings : MonoBehaviour
         PlayerPrefs.SetInt("ResolutionPreference", resolutionDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference", System.Convert.ToInt32(fullscreenToggle.isOn));
         PlayerPrefs.SetInt("HintsShownPreference", System.Convert.ToInt32(hintsShownToggle.isOn));
-        PlayerPrefs.SetFloat("VolumePreference", currentVolume);
+
+        audioMixer.GetFloat("Master Volume", out float volume);
+        PlayerPrefs.SetFloat("MasterVolumePreference", volume);
+        audioMixer.GetFloat("Sound Volume", out volume);
+        PlayerPrefs.SetFloat("SoundVolumePreference", volume);
+        audioMixer.GetFloat("Music Volume", out volume);
+        PlayerPrefs.SetFloat("MusicVolumePreference", volume);
+
         PlayerPrefs.SetFloat("CameraSensitivityPreference", currentCameraSensitivity);
         PlayerPrefs.SetFloat("ZoomSensitivityPreference", currentZoomSensitivity);
 
@@ -145,12 +154,26 @@ public class Settings : MonoBehaviour
 
         SetHintsShown(hintsShownValue);
 
-        if (PlayerPrefs.HasKey("VolumePreference"))
-            volumeSlider.value = PlayerPrefs.GetFloat("VolumePreference");
+        if (PlayerPrefs.HasKey("MasterVolumePreference"))
+            masterVolumeSlider.value = PlayerPrefs.GetFloat("MasterVolumePreference");
         else
-            volumeSlider.value = 100f;
+            masterVolumeSlider.value = 0f;
 
-        SetVolume(volumeSlider.value);
+        SetMasterVolume(masterVolumeSlider.value);
+
+        if (PlayerPrefs.HasKey("SoundVolumePreference"))
+            soundVolumeSlider.value = PlayerPrefs.GetFloat("SoundVolumePreference");
+        else
+            soundVolumeSlider.value = 0f;
+
+        SetSoundVolume(soundVolumeSlider.value);
+
+        if (PlayerPrefs.HasKey("MusicVolumePreference"))
+            musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolumePreference");
+        else
+            musicVolumeSlider.value = 0f;
+
+        SetMusicVolume(musicVolumeSlider.value);
 
         if (PlayerPrefs.HasKey("CameraSensitivityPreference"))
             cameraSensitivitySlider.value = PlayerPrefs.GetFloat("CameraSensitivityPreference");
@@ -187,7 +210,9 @@ public class Settings : MonoBehaviour
         LoadSettings(currentResolutionIndex);
 
         SetResolution(resolutionDropdown.value);
-        SetVolume(volumeSlider.value);
+        SetMasterVolume(masterVolumeSlider.value);
+        SetSoundVolume(soundVolumeSlider.value);
+        SetMusicVolume(musicVolumeSlider.value);
         SetFullscreen(fullscreenToggle.isOn);
         SetHintsShown(hintsShownToggle.isOn);
         SetCameraSensitivity(cameraSensitivitySlider.value);
