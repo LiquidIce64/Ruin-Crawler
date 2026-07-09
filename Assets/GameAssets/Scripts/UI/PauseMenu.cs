@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PauseMenu : MonoBehaviour
     public GameObject pauseGameMenu;
     private InputSystem_Actions input;
     private bool isLocked;
+    [SerializeField] private Selectable selectFirst;
 
     private void Awake()
     {
@@ -73,6 +75,7 @@ public class PauseMenu : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         PauseGame = true;
+        if (selectFirst != null) selectFirst.Select();
     }
 
     public void LockPause()

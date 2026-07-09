@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class DeathScreen : MonoBehaviour
 {
     [SerializeField] private GameObject deathScreenMenu;
+    [SerializeField] private Selectable selectFirst;
 
     private bool isShown;
 
@@ -25,6 +27,7 @@ public class DeathScreen : MonoBehaviour
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        if (selectFirst != null) selectFirst.Select();
     }
 
     public void RestartLevel()
