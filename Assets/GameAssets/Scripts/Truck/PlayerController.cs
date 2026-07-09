@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,7 +12,6 @@ public class PlayerController : MonoBehaviour
     public WinchTarget winchTarget;
     [SerializeField] private DeathScreen deathScreen;
     [SerializeField] private PauseMenu pauseMenu;
-    [SerializeField] private bool manualDestroyEnabled = true;
 
     [SerializeField] private List<Material> ditherFade;
     [SerializeField] private float fadeStart = 6f;
@@ -253,22 +251,9 @@ public class PlayerController : MonoBehaviour
         vehicleController.driverInput = new Vector3(moveVector.x, moveVector.y, brake ? 1f : 0f);
     }
 
-    private void HandleManualDestroyInput()
-    {
-        if (!manualDestroyEnabled || isVehicleDestroyed || vehicleController == null)
-            return;
-
-        if (pauseMenu != null && pauseMenu.PauseGame)
-            return;
-
-        if (Keyboard.current != null && Keyboard.current.pKey.wasPressedThisFrame)
-            vehicleController.DestroyVehicle();
-    }
-
     private void Update()
     {
         if (followTarget != null) transform.position = followTarget.position;
-        HandleManualDestroyInput();
         if (vehicleController != null && !isVehicleDestroyed) HandleDriverInput();
 
         Quaternion targetRotation = Quaternion.Euler(cameraRotation.y, cameraRotation.x, 0f);
