@@ -7,6 +7,8 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         if (SaveManager.saveData.completedLevels.Contains(tutorialScene))
             SceneManager.LoadScene("LevelSelect");
         else

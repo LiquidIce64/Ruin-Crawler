@@ -58,6 +58,8 @@ public class PauseMenu : MonoBehaviour
 
         pauseGameMenu.SetActive(false);
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         PauseGame = false;
     }
 
@@ -68,6 +70,8 @@ public class PauseMenu : MonoBehaviour
 
         pauseGameMenu.SetActive(true);
         Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         PauseGame = true;
     }
 
@@ -83,18 +87,24 @@ public class PauseMenu : MonoBehaviour
     public void SelectLevel()
     {
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         SceneManager.LoadScene("LevelSelect");
     }
 
     public void RestartLevel()
     {
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void LoadMenu()
     {
         Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         SceneManager.LoadScene("MainMenu");
     }
 }
