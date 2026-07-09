@@ -434,6 +434,7 @@ GameObject:
   - component: {fileID: 3097279021428915436}
   - component: {fileID: 5931315181977703011}
   - component: {fileID: 358243425991224673}
+  - component: {fileID: 6197203644098211448}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -554,6 +555,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hints
   hintsPanel: {fileID: 3424281630987485474}
+--- !u!114 &6197203644098211448
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1841510991229650994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d368f433b1541649b8ca95fb26b202b, type: 3}
+  m_Name: WinchStatusHUD
+  m_EditorClassIdentifier: Assembly-CSharp::WinchStatusHUD
+  playerController: {fileID: 8009497934304198577}
 --- !u!1 &1868682573968315076
 GameObject:
   m_ObjectHideFlags: 0
