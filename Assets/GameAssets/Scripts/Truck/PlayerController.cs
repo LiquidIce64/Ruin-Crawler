@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        input.Enable();
+        input.Player.Enable();
 
         input.Player.Brake.started += OnBrakeStarted;
         input.Player.Brake.canceled += OnBrakeCancelled;
@@ -81,18 +81,20 @@ public class PlayerController : MonoBehaviour
         input.Player.Boost.canceled += OnBoostCancelled;
         input.Player.Jump.performed += OnJump;
 
-        input.Player.FrontWinch.started += OnFrontWinch;
         input.Player.FrontWinch.performed += OnFrontWinch;
-        input.Player.FrontWinch.canceled += OnFrontWinch;
+        input.Player.FrontWinchPull.started += OnFrontWinchPull;
+        input.Player.FrontWinchPull.performed += OnFrontWinchPull;
+        input.Player.FrontWinchPull.canceled += OnFrontWinchPull;
 
-        input.Player.BackWinch.started += OnBackWinch;
         input.Player.BackWinch.performed += OnBackWinch;
-        input.Player.BackWinch.canceled += OnBackWinch;
+        input.Player.BackWinchPull.started += OnBackWinchPull;
+        input.Player.BackWinchPull.performed += OnBackWinchPull;
+        input.Player.BackWinchPull.canceled += OnBackWinchPull;
     }
 
     private void OnDisable()
     {
-        input.Disable();
+        input.Player.Disable();
 
         input.Player.Brake.started -= OnBrakeStarted;
         input.Player.Brake.canceled -= OnBrakeCancelled;
@@ -104,13 +106,15 @@ public class PlayerController : MonoBehaviour
         input.Player.Boost.canceled -= OnBoostCancelled;
         input.Player.Jump.performed -= OnJump;
 
-        input.Player.FrontWinch.started -= OnFrontWinch;
         input.Player.FrontWinch.performed -= OnFrontWinch;
-        input.Player.FrontWinch.canceled -= OnFrontWinch;
+        input.Player.FrontWinchPull.started -= OnFrontWinchPull;
+        input.Player.FrontWinchPull.performed -= OnFrontWinchPull;
+        input.Player.FrontWinchPull.canceled -= OnFrontWinchPull;
 
-        input.Player.BackWinch.started -= OnBackWinch;
         input.Player.BackWinch.performed -= OnBackWinch;
-        input.Player.BackWinch.canceled -= OnBackWinch;
+        input.Player.BackWinchPull.started -= OnBackWinchPull;
+        input.Player.BackWinchPull.performed -= OnBackWinchPull;
+        input.Player.BackWinchPull.canceled -= OnBackWinchPull;
     }
 
     private void OnDestroy()
@@ -138,101 +142,59 @@ public class PlayerController : MonoBehaviour
 
     private void OnFrontWinch(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction)
+        if (vehicleController.frontWinch.IsAttached)
         {
-            if (!context.performed) return;
-            if (vehicleController.frontWinch.IsAttached)
-            {
-                vehicleController.frontWinch.Detach();
-                onFrontWinchDetached?.Invoke();
-                return;
-            }
-            if (winchTarget != null && winchTarget.FrontWinchAvailable)
-            {
-                vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
-                onFrontWinchAttached?.Invoke();
-            }
+            vehicleController.frontWinch.Detach();
+            onFrontWinchDetached?.Invoke();
+            return;
         }
-        else
+        if (winchTarget != null && winchTarget.FrontWinchAvailable)
         {
-            if (context.started && !vehicleController.frontWinch.IsAttached)
-            {
-                if (winchTarget != null && winchTarget.FrontWinchAvailable)
-                {
-                    vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
-                    onFrontWinchAttached?.Invoke();
-                }
-            }
+            vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
+            onFrontWinchAttached?.Invoke();
+        }
+    }
 
-            bool ctrl = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
-            if (ctrl)
-            {
-                vehicleController.frontWinch.extend = context.started;
-                vehicleController.frontWinch.pull = false;
-                if (context.started)
-                {
-                    onAnyWinchExtend?.Invoke();
-                }
-            }
-            else
-            {
-                vehicleController.frontWinch.pull = context.started;
-                vehicleController.frontWinch.extend = false;
-                if (context.started)
-                {
-                    onAnyWinchPull?.Invoke();
-                }
-            }
+    private void OnFrontWinchPull(InputAction.CallbackContext context)
+    {
+        float value = context.ReadValue<float>();
+        bool pull = value > 0f;
+        bool extend = value < 0f;
+        vehicleController.frontWinch.pull = pull;
+        vehicleController.frontWinch.extend = extend;
+        if (context.started)
+        {
+            if (pull) onAnyWinchPull?.Invoke();
+            if (extend) onAnyWinchExtend?.Invoke();
         }
     }
 
     private void OnBackWinch(InputAction.CallbackContext context)
     {
-        if (context.interaction is TapInteraction)
+        if (vehicleController.backWinch.IsAttached)
         {
-            if (!context.performed) return;
-            if (vehicleController.backWinch.IsAttached)
-            {
-                vehicleController.backWinch.Detach();
-                onBackWinchDetached?.Invoke();
-                return;
-            }
-            if (winchTarget != null && winchTarget.BackWinchAvailable)
-            {
-                vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
-                onBackWinchAttached?.Invoke();
-            }
+            vehicleController.backWinch.Detach();
+            onBackWinchDetached?.Invoke();
+            return;
         }
-        else
+        if (winchTarget != null && winchTarget.BackWinchAvailable)
         {
-            if (context.started && !vehicleController.backWinch.IsAttached)
-            {
-                if (winchTarget != null && winchTarget.BackWinchAvailable)
-                {
-                    vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
-                    onBackWinchAttached?.Invoke();
-                }
-            }
+            vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
+            onBackWinchAttached?.Invoke();
+        }
+    }
 
-            bool ctrl = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
-            if (ctrl)
-            {
-                vehicleController.backWinch.extend = context.started;
-                vehicleController.backWinch.pull = false;
-                if (context.started)
-                {
-                    onAnyWinchExtend?.Invoke();
-                }
-            }
-            else
-            {
-                vehicleController.backWinch.pull = context.started;
-                vehicleController.backWinch.extend = false;
-                if (context.started)
-                {
-                    onAnyWinchPull?.Invoke();
-                }
-            }
+    private void OnBackWinchPull(InputAction.CallbackContext context)
+    {
+        float value = context.ReadValue<float>();
+        bool pull = value > 0f;
+        bool extend = value < 0f;
+        vehicleController.backWinch.pull = pull;
+        vehicleController.backWinch.extend = extend;
+        if (context.started)
+        {
+            if (pull) onAnyWinchPull?.Invoke();
+            if (extend) onAnyWinchExtend?.Invoke();
         }
     }
 

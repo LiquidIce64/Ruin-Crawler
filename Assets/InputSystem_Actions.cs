@@ -134,8 +134,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""id"": ""17a8777f-07b4-4005-9021-dbbfb7b031b9"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""Tap,SlowTap"",
+                    ""interactions"": ""Tap"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FrontWinchPull"",
+                    ""type"": ""Value"",
+                    ""id"": ""cdd69e08-c997-455c-bd42-9cbaead09b8f"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": ""SlowTap"",
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""BackWinch"",
@@ -143,14 +152,23 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""id"": ""0dabf1dd-db6d-496e-a377-bdc74720a205"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""Tap,SlowTap"",
+                    ""interactions"": ""Tap"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""BackWinchPull"",
+                    ""type"": ""Value"",
+                    ""id"": ""f9c7d588-d791-4f79-8250-2f07d89e1864"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": ""SlowTap"",
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Boost"",
                     ""type"": ""Button"",
                     ""id"": ""a1b2c3d4-e5f6-7890-abcd-ef1234567890"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -378,11 +396,187 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""7ccc614e-7a84-4194-8cfd-cd21b5ae3338"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""FrontWinch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Button With One Modifier"",
+                    ""id"": ""68f4e40a-a90f-41d8-87e7-c6a61ef2c282"",
+                    ""path"": ""ButtonWithOneModifier"",
+                    ""interactions"": """",
+                    ""processors"": ""Invert"",
+                    ""groups"": """",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Modifier"",
+                    ""id"": ""0f7d8c53-5d2f-495c-a8d2-88f69989636d"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button"",
+                    ""id"": ""aa7abe7f-2e32-4da5-9cc0-8336863d7b03"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button With One Modifier"",
+                    ""id"": ""55d712ce-9f8a-4fd3-9b78-4dd048b981c5"",
+                    ""path"": ""ButtonWithOneModifier"",
+                    ""interactions"": """",
+                    ""processors"": ""Invert"",
+                    ""groups"": """",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Modifier"",
+                    ""id"": ""7222abca-4c7c-4304-90f3-d82d320a7920"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button"",
+                    ""id"": ""301c89a7-7711-4b82-9be0-05c71cf7224c"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c46d6c19-d9d0-4bca-8cbc-cfe4ce998aaa"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""26f523ca-4076-41bc-82ac-ffcd84e3f582"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""FrontWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Button With One Modifier"",
+                    ""id"": ""f7e6dd9c-bd53-4a87-ad0c-e0b21888a318"",
+                    ""path"": ""ButtonWithOneModifier"",
+                    ""interactions"": """",
+                    ""processors"": ""Invert"",
+                    ""groups"": """",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Modifier"",
+                    ""id"": ""e59c2272-4d46-4b6d-bc1f-9a5b718efa36"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button"",
+                    ""id"": ""187b31a2-2b1f-45f7-95a2-9dedd4edc5b3"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button With One Modifier"",
+                    ""id"": ""e3090fb9-ca81-4600-8490-2c8f788cbcb8"",
+                    ""path"": ""ButtonWithOneModifier"",
+                    ""interactions"": """",
+                    ""processors"": ""Invert"",
+                    ""groups"": """",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Modifier"",
+                    ""id"": ""6220dcfa-4fcc-4c22-84b8-2127c219bcaf"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Button"",
+                    ""id"": ""273e4eac-c95c-40c0-ab74-0300b78be2f2"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""91cf0d69-3435-49e1-bcee-5270e4edf172"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""BackWinchPull"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4da163fe-fe7d-48db-9af5-d74fbfc5b713"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""BackWinchPull"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -400,7 +594,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""043fdb88-74cb-4649-96f4-879ef1cac77f"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -422,7 +616,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d4e5f6a7-8901-2345-bcde-345678901234"",
-                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -1041,7 +1235,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Brake = m_Player.FindAction("Brake", throwIfNotFound: true);
         m_Player_FrontWinch = m_Player.FindAction("FrontWinch", throwIfNotFound: true);
+        m_Player_FrontWinchPull = m_Player.FindAction("FrontWinchPull", throwIfNotFound: true);
         m_Player_BackWinch = m_Player.FindAction("BackWinch", throwIfNotFound: true);
+        m_Player_BackWinchPull = m_Player.FindAction("BackWinchPull", throwIfNotFound: true);
         m_Player_Boost = m_Player.FindAction("Boost", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         // UI
@@ -1142,7 +1338,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Brake;
     private readonly InputAction m_Player_FrontWinch;
+    private readonly InputAction m_Player_FrontWinchPull;
     private readonly InputAction m_Player_BackWinch;
+    private readonly InputAction m_Player_BackWinchPull;
     private readonly InputAction m_Player_Boost;
     private readonly InputAction m_Player_Jump;
     /// <summary>
@@ -1177,9 +1375,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @FrontWinch => m_Wrapper.m_Player_FrontWinch;
         /// <summary>
+        /// Provides access to the underlying input action "Player/FrontWinchPull".
+        /// </summary>
+        public InputAction @FrontWinchPull => m_Wrapper.m_Player_FrontWinchPull;
+        /// <summary>
         /// Provides access to the underlying input action "Player/BackWinch".
         /// </summary>
         public InputAction @BackWinch => m_Wrapper.m_Player_BackWinch;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/BackWinchPull".
+        /// </summary>
+        public InputAction @BackWinchPull => m_Wrapper.m_Player_BackWinchPull;
         /// <summary>
         /// Provides access to the underlying input action "Player/Boost".
         /// </summary>
@@ -1229,9 +1435,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @FrontWinch.started += instance.OnFrontWinch;
             @FrontWinch.performed += instance.OnFrontWinch;
             @FrontWinch.canceled += instance.OnFrontWinch;
+            @FrontWinchPull.started += instance.OnFrontWinchPull;
+            @FrontWinchPull.performed += instance.OnFrontWinchPull;
+            @FrontWinchPull.canceled += instance.OnFrontWinchPull;
             @BackWinch.started += instance.OnBackWinch;
             @BackWinch.performed += instance.OnBackWinch;
             @BackWinch.canceled += instance.OnBackWinch;
+            @BackWinchPull.started += instance.OnBackWinchPull;
+            @BackWinchPull.performed += instance.OnBackWinchPull;
+            @BackWinchPull.canceled += instance.OnBackWinchPull;
             @Boost.started += instance.OnBoost;
             @Boost.performed += instance.OnBoost;
             @Boost.canceled += instance.OnBoost;
@@ -1264,9 +1476,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @FrontWinch.started -= instance.OnFrontWinch;
             @FrontWinch.performed -= instance.OnFrontWinch;
             @FrontWinch.canceled -= instance.OnFrontWinch;
+            @FrontWinchPull.started -= instance.OnFrontWinchPull;
+            @FrontWinchPull.performed -= instance.OnFrontWinchPull;
+            @FrontWinchPull.canceled -= instance.OnFrontWinchPull;
             @BackWinch.started -= instance.OnBackWinch;
             @BackWinch.performed -= instance.OnBackWinch;
             @BackWinch.canceled -= instance.OnBackWinch;
+            @BackWinchPull.started -= instance.OnBackWinchPull;
+            @BackWinchPull.performed -= instance.OnBackWinchPull;
+            @BackWinchPull.canceled -= instance.OnBackWinchPull;
             @Boost.started -= instance.OnBoost;
             @Boost.performed -= instance.OnBoost;
             @Boost.canceled -= instance.OnBoost;
@@ -1609,12 +1827,26 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnFrontWinch(InputAction.CallbackContext context);
         /// <summary>
+        /// Method invoked when associated input action "FrontWinchPull" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnFrontWinchPull(InputAction.CallbackContext context);
+        /// <summary>
         /// Method invoked when associated input action "BackWinch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBackWinch(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "BackWinchPull" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBackWinchPull(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Boost" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
