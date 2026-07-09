@@ -16,6 +16,11 @@ public class LeverLogic : MonoBehaviour, IWinchInteractable
     public UnityEvent OnDeactivated; // Что делаем при выключении
     public UnityEvent OnToggled; // Что делаем при переключении
 
+    [Header("Звук")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip soundOn;
+    [SerializeField] private AudioClip soundOff;
+
     [Header("Текущее состояние (только для просмотра)")]
     [SerializeField] private bool isOn = false;
 
@@ -53,6 +58,14 @@ public class LeverLogic : MonoBehaviour, IWinchInteractable
         if (isOn == newState) return;
         isOn = newState;
         OnToggled.Invoke();
+
+        if (audioSource != null)
+        {
+            if (isOn && soundOn != null)
+                audioSource.PlayOneShot(soundOn);
+            else if (!isOn && soundOff != null)
+                audioSource.PlayOneShot(soundOff);
+        }
 
         if (animator != null)
         {

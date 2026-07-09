@@ -22,6 +22,11 @@ public class LeverLogicForLevel : MonoBehaviour, IWinchInteractable
     public UnityEvent OnActivated;
     public UnityEvent OnDeactivated;
 
+    [Header("Звук")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip soundOn;
+    [SerializeField] private AudioClip soundOff;
+
     [Header("Текущее состояние")]
     [SerializeField] private bool isOn = false;
 
@@ -57,6 +62,14 @@ public class LeverLogicForLevel : MonoBehaviour, IWinchInteractable
 
         if (animator != null)
             animator.SetBool(animParamName, isOn);
+
+        if (audioSource != null)
+        {
+            if (isOn && soundOn != null)
+                audioSource.PlayOneShot(soundOn);
+            else if (!isOn && soundOff != null)
+                audioSource.PlayOneShot(soundOff);
+        }
 
         if (isOn)
             OnActivated.Invoke();
