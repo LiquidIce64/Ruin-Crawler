@@ -30,6 +30,11 @@ public class Winch : MonoBehaviour
     public bool IsAttached => joint.connectedBody != null;
     public Rigidbody ConnectedBody => joint.connectedBody;
 
+    [Header("Sounds")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip attachSound;
+    [SerializeField] private AudioClip detachSound;
+
     private void Awake()
     {
         rope = transform.GetChild(0).gameObject;
@@ -39,6 +44,9 @@ public class Winch : MonoBehaviour
         joint.anchor = transform.localPosition;
         springForce = joint.spring;
         joint.spring = 0f;
+
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
     }
 
     public IEnumerable<Rigidbody> FindAttachmentPoints()
@@ -72,6 +80,10 @@ public class Winch : MonoBehaviour
         if (attachmentPoint.gameObject.TryGetComponent(out IWinchInteractable component))
         {
             component.Interact();
+
+            if (component is not MovableObject)
+                autoShortenActive = true;
+
             if (component.AutoDetach)
             {
                 transform.LookAt(attachmentPoint.position);
@@ -89,6 +101,9 @@ public class Winch : MonoBehaviour
         autoShortenActive = true;
         autoShortenTimer = 2f;
         rope.SetActive(true);
+
+        if (audioSource != null && attachSound != null)
+            audioSource.PlayOneShot(attachSound);
     }
 
     public void Detach()
@@ -104,6 +119,9 @@ public class Winch : MonoBehaviour
         joint.connectedBody = null;
         joint.spring = 0f;
         ropeAnimT = 1f;
+
+        if (audioSource != null && detachSound != null)
+            audioSource.PlayOneShot(detachSound);
     }
 
     private void Update()

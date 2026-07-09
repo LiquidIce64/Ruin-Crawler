@@ -20,6 +20,11 @@ public class PressurePlateLogic : MonoBehaviour
     [SerializeField] private int currentObjects = 0;
     [SerializeField] private bool isActivated = false;
 
+    [Header("Звук")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip soundOn;
+    [SerializeField] private AudioClip soundOff;
+
     // Кэшируем ID слоя, чтобы не искать его каждый кадр
     private int winchLayerId;
 
@@ -53,6 +58,9 @@ public class PressurePlateLogic : MonoBehaviour
                 animator.SetBool(animParamName, true);
             }
 
+            if (audioSource != null && soundOn != null)
+                audioSource.PlayOneShot(soundOn);
+
             OnToggled.Invoke();
             OnActivated.Invoke();
             Debug.Log($"Плита АКТИВИРОВАНА! ({currentObjects}/{requiredObjects})");
@@ -66,6 +74,9 @@ public class PressurePlateLogic : MonoBehaviour
             {
                 animator.SetBool(animParamName, false);
             }
+
+            if (audioSource != null && soundOff != null)
+                audioSource.PlayOneShot(soundOff);
 
             OnToggled.Invoke();
             OnDeactivated.Invoke();

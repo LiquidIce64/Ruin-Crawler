@@ -34,56 +34,91 @@ public class VehicleController : MonoBehaviour
 
     [Header("Movement Config")]
     [SerializeField][Range(0f, 90f)] private float maxSteerAngle = 30f;
-    private float motorTorque = 270f;
+    private float motorTorque = 440f;
     private float turboMultiplier = 1.8f;
-    private float brakingForce = 500f;
-    private float jumpVelocity = 10f;
-    private float swingForce = 5.7f;
+    private float brakingForce = 800f;
+    private float jumpVelocity = 11f;
+    private float swingForce = 5.75f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip jumpClip;
+    [SerializeField] private AudioSource jumpAudioSource;
+
+    [Header("Steering Stability")]
+    private float highSpeedSteerReduction = 0.45f;
 
     [Header("Low Speed Torque Boost")]
     private bool enableLowSpeedBoost = true;
-    private float lowSpeedThreshold = 10f;
-    private float lowSpeedTorqueFactor = 2.0f;
+    private float lowSpeedThreshold = 8f;
+    private float lowSpeedTorqueFactor = 1.6f;
+
+    [Header("Wall Riding Prevention")]
+    private float slopeTorqueFalloffStart = 45f;
+    private float slopeTorqueFalloffEnd = 60f;
+    private float wallGripMultiplier = 0.1f;
 
     [Header("Stability Config")]
     private float centerOfMassY = -0.5f;
-    private float antiRoll = 12000f;
-    private float yawDamping = 100f;
+    private float antiRoll = 30000f;
+    private float yawDamping = 120f;
+
+    [Header("Upright Stabilization")]
+    private float uprightStabilizationStrength = 35f;
+    private float uprightStabilizationDamping = 6f;
+    private float landingStabilizationMultiplier = 2.5f;
+    private float landingAngularDrag = 6f;
 
     [Header("Rigidbody Damping")]
     private float linearDrag = 0.3f;
-    private float angularDrag = 1.0f;
+    private float angularDrag = 1.5f;
 
     [Header("Downforce")]
-    private float downforceCoefficient = 0.5f;
-    private float lowSpeedDownforce = 5.0f;
+    private float downforceCoefficient = 3f;
 
     [Header("Suspension")]
-    private float suspensionSpring = 35000f;
-    private float suspensionDamper = 4500f;
+    private float suspensionSpring = 25000f;
+    private float suspensionDamper = 8000f;
     private float suspensionDistance = 0.3f;
 
     [Header("Friction Config (Forward)")]
     private float forwardExtremumSlip = 0.3f;
-    private float forwardExtremumValue = 2.2f;
+    private float forwardExtremumValue = 1.0f;
     private float forwardAsymptoteSlip = 0.7f;
-    private float forwardAsymptoteValue = 1.8f;
-    private float forwardStiffness = 2.5f;
+    private float forwardAsymptoteValue = 0.8f;
+    private float forwardStiffness = 2.0f;
 
     [Header("Friction Config (Sideways)")]
     private float sidewaysExtremumSlip = 0.1f;
-    private float sidewaysExtremumValue = 1.5f;
+    private float sidewaysExtremumValue = 1.2f;
     private float sidewaysAsymptoteSlip = 0.4f;
     private float sidewaysAsymptoteValue = 1.0f;
-    private float sidewaysStiffness = 1.2f;
+    private float sidewaysStiffness = 2.5f;
 
     [Header("Hill Climbing")]
     private float slopeAngleThreshold = 5f;
 
+    public bool IsGrounded => AreAtLeastThreeWheelsGrounded();
+
+    private float jumpTimer = 0f;
+    private float jumpDuration = 0.5f;
+    private float landingSmoothTime = 0.3f;
+    private float landingTimer = 0f;
+
+    [Header("Speed / Sound")]
+    private float maxSpeedKmh = 90f;
+    public float CurrentSpeedNormalized
+    {
+        get
+        {
+            if (rb == null) return 0f;
+            float speedKmh = rb.linearVelocity.magnitude * 3.6f;
+            return Mathf.Clamp01(speedKmh / maxSpeedKmh);
+        }
+    }
+
     private Rigidbody rb;
     private bool isJumping = false;
-    private float jumpTimer = 0f;
-    private const float jumpDuration = 0.2f;
+    private bool wasInAir = false;
 
     private void Awake()
     {
@@ -164,6 +199,14 @@ public class VehicleController : MonoBehaviour
                 jumpParticles.Play();
             }
 
+            if (jumpClip != null)
+            {
+                if (jumpAudioSource != null)
+                    jumpAudioSource.PlayOneShot(jumpClip);
+                else
+                    AudioSource.PlayClipAtPoint(jumpClip, transform.position);
+            }
+
             onJumpPerformed?.Invoke();
         }
     }
@@ -172,6 +215,28 @@ public class VehicleController : MonoBehaviour
     {
         return wheelFL.isGrounded || wheelFR.isGrounded || wheelBL.isGrounded || wheelBR.isGrounded;
     }
+
+
+    public bool AreAtLeastThreeWheelsGrounded()
+    {
+        int groundedCount = 0;
+        if (wheelFL.isGrounded) groundedCount++;
+        if (wheelFR.isGrounded) groundedCount++;
+        if (wheelBL.isGrounded) groundedCount++;
+        if (wheelBR.isGrounded) groundedCount++;
+        return groundedCount >= 3;
+    }
+
+    public bool AreAtLeastTwoWheelsGrounded()
+    {
+        int groundedCount = 0;
+        if (wheelFL.isGrounded) groundedCount++;
+        if (wheelFR.isGrounded) groundedCount++;
+        if (wheelBL.isGrounded) groundedCount++;
+        if (wheelBR.isGrounded) groundedCount++;
+        return groundedCount >= 2;
+    }
+
 
     private void UpdateWheel(WheelCollider wheel, Transform wheelMesh, bool canSteer = false, bool canDrive = true, bool canBrake = true)
     {
@@ -205,50 +270,60 @@ public class VehicleController : MonoBehaviour
             currentSteer = 0f;
             currentTorque = 0f;
             currentBrake = 0f;
+            return;
         }
-        else
+
+        float slopeAngle = GetSlopeAngle();
+        float slopeRange = Mathf.Max(0.01f, slopeTorqueFalloffEnd - slopeTorqueFalloffStart);
+
+        float maxSpeedMs = maxSpeedKmh / 3.6f;
+        float speedFactor = maxSpeedMs > 0f ? Mathf.Clamp01(rb.linearVelocity.magnitude / maxSpeedMs) : 0f;
+        float steerMultiplier = Mathf.Lerp(1f, highSpeedSteerReduction, speedFactor);
+
+        currentSteer = driverInput.x * maxSteerAngle * steerMultiplier;
+
+        if (driverInput.z > 0.1f)
         {
-            currentSteer = driverInput.x * maxSteerAngle;
-
-            if (driverInput.z > 0.1f)
-            {
-                currentTorque = 0f;
-            }
-            else
-            {
-                float torque = driverInput.y * motorTorque;
-
-                if (turbo && driverInput.y > 0.1f)
-                    torque *= turboMultiplier;
-
-                if (driverInput.y > 0.1f)
-                {
-                    float slopeAngle = GetSlopeAngle();
-                    if (slopeAngle > slopeAngleThreshold)
-                    {
-                        torque *= (slopeAngle < 20f) ? 1.3f : 1.8f;
-                    }
-                }
-
-                if (enableLowSpeedBoost && driverInput.y > 0.1f)
-                {
-                    float speed = rb.linearVelocity.magnitude;
-                    float t = 1f - Mathf.Clamp01(speed / lowSpeedThreshold);
-                    float boost = Mathf.Lerp(1f, lowSpeedTorqueFactor, t);
-                    torque *= boost;
-                }
-
-                currentTorque = isJumping ? 0f : torque;
-            }
+            currentTorque = 0f;
             currentBrake = driverInput.z * brakingForce;
+            return;
         }
+
+        float torque = driverInput.y * motorTorque;
+
+        if (turbo && driverInput.y > 0.1f)
+            torque *= turboMultiplier;
+
+        if (driverInput.y > 0.1f)
+        {
+            if (slopeAngle > slopeAngleThreshold)
+                torque *= (slopeAngle < 20f) ? 1.3f : 1.8f;
+        }
+
+        if (enableLowSpeedBoost && driverInput.y > 0.1f)
+        {
+            float speed = rb.linearVelocity.magnitude;
+            float t = 1f - Mathf.Clamp01(speed / lowSpeedThreshold);
+            float boost = Mathf.Lerp(1f, lowSpeedTorqueFactor, t);
+            torque *= boost;
+        }
+
+        Vector3 driveDirection = transform.forward * driverInput.y;
+        if (driveDirection.sqrMagnitude > 0.0001f && driveDirection.normalized.y > 0f)
+        {
+            float uphillTorqueFactor = 1f - Mathf.Clamp01((slopeAngle - slopeTorqueFalloffStart) / slopeRange);
+            torque *= uphillTorqueFactor;
+        }
+
+        if (!AreAtLeastTwoWheelsGrounded())
+            torque = 0f;
+
+        currentTorque = (isJumping || landingTimer > 0f) ? 0f : torque;
+        currentBrake = driverInput.z * brakingForce;
     }
 
     private void Update()
     {
-        bool winchAttached = frontWinch.IsAttached || backWinch.IsAttached;
-        bool grounded = IsAnyWheelGrounded();
-
         if (isJumping)
         {
             jumpTimer -= Time.deltaTime;
@@ -266,13 +341,22 @@ public class VehicleController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        bool grounded = IsAnyWheelGrounded();
+        HandleLandingState(grounded);
+
+        UpdateWheelGrip(wheelFL);
+        UpdateWheelGrip(wheelFR);
+        UpdateWheelGrip(wheelBL);
+        UpdateWheelGrip(wheelBR);
+
         ApplyAntiRoll(wheelFL, wheelFR);
         ApplyAntiRoll(wheelBL, wheelBR);
         ApplyDownforce();
         ApplyYawStabilization();
+        ApplyUprightStabilization(grounded);
 
         bool winchAttached = frontWinch.IsAttached || backWinch.IsAttached;
-        if (winchAttached && !IsAnyWheelGrounded())
+        if (winchAttached && !grounded)
         {
             Camera cam = Camera.main;
             if (cam != null)
@@ -299,15 +383,100 @@ public class VehicleController : MonoBehaviour
         rb.AddTorque(transform.up * dampingTorque, ForceMode.Force);
     }
 
+    private void HandleLandingState(bool grounded)
+    {
+        if (!grounded)
+        {
+            wasInAir = true;
+        }
+        else if (wasInAir)
+        {
+            wasInAir = false;
+            landingTimer = landingSmoothTime;
+        }
+
+        if (landingTimer > 0f)
+            landingTimer = Mathf.Max(0f, landingTimer - Time.fixedDeltaTime);
+
+        rb.angularDamping = landingTimer > 0f ? landingAngularDrag : angularDrag;
+    }
+
+    private void ApplyUprightStabilization(bool grounded)
+    {
+        if (!grounded && landingTimer <= 0f)
+            return;
+
+        Vector3 targetUp = Vector3.up;
+        if (grounded && TryGetAverageGroundNormal(out var groundNormal)
+            && Vector3.Angle(Vector3.up, groundNormal) <= slopeTorqueFalloffEnd)
+        {
+            targetUp = groundNormal;
+        }
+
+        Vector3 correctionAxis = Vector3.Cross(transform.up, targetUp);
+
+        Vector3 angularVelocity = rb.angularVelocity;
+        Vector3 yawComponent = Vector3.Project(angularVelocity, transform.up);
+        Vector3 rollPitchVelocity = angularVelocity - yawComponent;
+
+        float strength = landingTimer > 0f
+            ? uprightStabilizationStrength * landingStabilizationMultiplier
+            : uprightStabilizationStrength;
+
+        Vector3 stabilizingTorque = correctionAxis * strength - rollPitchVelocity * uprightStabilizationDamping;
+        rb.AddTorque(stabilizingTorque, ForceMode.Acceleration);
+    }
+
+    private void UpdateWheelGrip(WheelCollider wheel)
+    {
+        float gripFactor = 1f;
+
+        if (wheel.GetGroundHit(out WheelHit hit))
+        {
+            float contactAngle = Vector3.Angle(Vector3.up, hit.normal);
+            float slopeRange = Mathf.Max(0.01f, slopeTorqueFalloffEnd - slopeTorqueFalloffStart);
+            float t = Mathf.Clamp01((contactAngle - slopeTorqueFalloffStart) / slopeRange);
+            gripFactor = Mathf.Lerp(1f, wallGripMultiplier, t);
+        }
+
+        WheelFrictionCurve forward = wheel.forwardFriction;
+        forward.stiffness = forwardStiffness * gripFactor;
+        wheel.forwardFriction = forward;
+
+        WheelFrictionCurve sideways = wheel.sidewaysFriction;
+        sideways.stiffness = sidewaysStiffness * gripFactor;
+        wheel.sidewaysFriction = sideways;
+    }
+
+    private bool TryGetAverageGroundNormal(out Vector3 normal)
+    {
+        normal = Vector3.zero;
+        int groundedCount = 0;
+        WheelHit hit;
+
+        if (wheelFL.GetGroundHit(out hit)) { normal += hit.normal; groundedCount++; }
+        if (wheelFR.GetGroundHit(out hit)) { normal += hit.normal; groundedCount++; }
+        if (wheelBL.GetGroundHit(out hit)) { normal += hit.normal; groundedCount++; }
+        if (wheelBR.GetGroundHit(out hit)) { normal += hit.normal; groundedCount++; }
+
+        if (groundedCount == 0)
+        {
+            normal = Vector3.up;
+            return false;
+        }
+
+        normal = (normal / groundedCount).normalized;
+        return true;
+    }
+
     private void ApplyDownforce()
     {
         if (!IsAnyWheelGrounded())
             return;
 
         float speed = rb.linearVelocity.magnitude;
-        float dynamicDownforce = speed * speed * downforceCoefficient;
-        float staticDownforce = lowSpeedDownforce * rb.mass * Mathf.Max(0f, 1f - (speed / lowSpeedThreshold));
-        rb.AddForce(-transform.up * (dynamicDownforce + staticDownforce), ForceMode.Force);
+        float downforce = speed * speed * downforceCoefficient;
+        rb.AddForce(-transform.up * downforce, ForceMode.Force);
     }
 
     private void ApplyAntiRoll(WheelCollider leftWheel, WheelCollider rightWheel)
