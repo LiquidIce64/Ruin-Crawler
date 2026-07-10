@@ -21,20 +21,23 @@ EditorBuildSettings:
     path: Assets/Scenes/Levels/Labyrinth.unity
     guid: 8146635438f3df14786cd6540bcfb6ab
   - enabled: 1
-    path: Assets/Scenes/Levels/Level2.unity
-    guid: 53b35168baa3962469eb6d738fac56b5
-  - enabled: 1
     path: Assets/Scenes/Levels/Level0.unity
     guid: 08ee743dac1e3714bb197cf2c50f2bff
   - enabled: 1
     path: Assets/Scenes/Levels/Level1.unity
     guid: 4993c8e0dfd5a7c42bcd7ef140941337
   - enabled: 1
+    path: Assets/Scenes/Levels/Level2.unity
+    guid: 53b35168baa3962469eb6d738fac56b5
+  - enabled: 1
     path: Assets/Scenes/Levels/Level3.unity
     guid: cb74d681d5c50e649bb810044e22298d
   - enabled: 1
     path: Assets/Scenes/Levels/Level4.unity
     guid: 5fb902345aa704c429d3f862ec1093a5
+  - enabled: 1
+    path: Assets/Scenes/Levels/Last Level.unity
+    guid: 78995c49d67e68b4592972d1cfdc2748
   - enabled: 1
     path: Assets/Scenes/Levels/SecretLevel.unity
     guid: f7aebe8c17e755a41a88074540a8e3d7
