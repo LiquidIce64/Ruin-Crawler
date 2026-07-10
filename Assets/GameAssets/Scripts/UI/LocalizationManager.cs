@@ -55,7 +55,7 @@ public static class LocalizationManager
 
     private static readonly Dictionary<string, string> RussianByEnglishText = new();
     private static readonly Dictionary<int, string> SourceRussianTextByInstanceId = new();
-    private static int currentLanguageIndex = PlayerPrefs.GetInt(LanguagePreferenceKey, RussianLanguageIndex);
+    private static int currentLanguageIndex = PlayerPrefs.GetInt(LanguagePreferenceKey, EnglishLanguageIndex);
 
     static LocalizationManager()
     {
