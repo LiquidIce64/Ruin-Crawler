@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class DoorLogic : MonoBehaviour
 {
@@ -9,11 +8,6 @@ public class DoorLogic : MonoBehaviour
 
     [Header("Текущее состояние")]
     [SerializeField] private bool isOpen = false;
-
-    [Header("Время движения")]
-    [SerializeField] private float animationDuration = 1.5f;
-
-    private bool isMoving = false;
 
     [Header("Звук")]
     [SerializeField] private AudioSource audioSource;
@@ -30,44 +24,27 @@ public class DoorLogic : MonoBehaviour
     [ContextMenu("Открыть ворота (Тест)")]
     public void OpenDoor()
     {
-        // Если дверь уже открыта или она сейчас в процессе движения - игнорируем клик
-        if (isOpen || isMoving) return;
-
-        StartCoroutine(DoorMovementRoutine(true));
+        if (isOpen) return;
+        isOpen = true;
+        if (animator != null) animator.SetBool(animParamName, true);
+        PlayDoorSound();
+        Debug.Log("Ворота: ОТКРЫВАЮТСЯ");
     }
 
     [ContextMenu("Закрыть ворота (Тест)")]
     public void CloseDoor()
     {
-        if (!isOpen || isMoving) return;
-
-        StartCoroutine(DoorMovementRoutine(false));
+        if (!isOpen) return;
+        isOpen = false;
+        if (animator != null) animator.SetBool(animParamName, false);
+        PlayDoorSound();
+        Debug.Log("Ворота: ЗАКРЫВАЮТСЯ");
     }
 
     public void ToggleDoor()
     {
         if (isOpen) CloseDoor();
         else OpenDoor();
-    }
-
-    private IEnumerator DoorMovementRoutine(bool targetState)
-    {
-        isMoving = true;
-        isOpen = targetState;
-
-        if (animator != null)
-        {
-            animator.SetBool(animParamName, targetState);
-        }
-
-        PlayDoorSound();
-
-        Debug.Log(targetState ? "Ворота: ОТКРЫВАЮТСЯ" : "Ворота: ЗАКРЫВАЮТСЯ");
-
-        // Ждем ровно столько секунд, сколько длится анимация
-        yield return new WaitForSeconds(animationDuration);
-
-        isMoving = false;
     }
 
     private void PlayDoorSound()
