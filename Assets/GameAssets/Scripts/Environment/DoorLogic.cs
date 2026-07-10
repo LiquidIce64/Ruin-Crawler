@@ -15,6 +15,10 @@ public class DoorLogic : MonoBehaviour
 
     private bool isMoving = false;
 
+    [Header("Звук")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip doorSound;
+
     private void Start()
     {
         if (animator != null)
@@ -56,11 +60,21 @@ public class DoorLogic : MonoBehaviour
             animator.SetBool(animParamName, targetState);
         }
 
+        PlayDoorSound();
+
         Debug.Log(targetState ? "Ворота: ОТКРЫВАЮТСЯ" : "Ворота: ЗАКРЫВАЮТСЯ");
 
         // Ждем ровно столько секунд, сколько длится анимация
         yield return new WaitForSeconds(animationDuration);
 
         isMoving = false;
+    }
+
+    private void PlayDoorSound()
+    {
+        if (audioSource != null && doorSound != null)
+        {
+            audioSource.PlayOneShot(doorSound);
+        }
     }
 }

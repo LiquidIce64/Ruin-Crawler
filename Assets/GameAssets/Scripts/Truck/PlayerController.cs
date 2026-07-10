@@ -158,13 +158,20 @@ public class PlayerController : MonoBehaviour
         float value = context.ReadValue<float>();
         bool pull = value > 0f;
         bool extend = value < 0f;
-        vehicleController.frontWinch.pull = pull;
-        vehicleController.frontWinch.extend = extend;
+
         if (context.started)
         {
+            if (!vehicleController.frontWinch.IsAttached && winchTarget != null && winchTarget.FrontWinchAvailable)
+            {
+                vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
+                onFrontWinchAttached?.Invoke();
+            }
             if (pull) onAnyWinchPull?.Invoke();
             if (extend) onAnyWinchExtend?.Invoke();
         }
+
+        vehicleController.frontWinch.pull = pull;
+        vehicleController.frontWinch.extend = extend;
     }
 
     private void OnBackWinch(InputAction.CallbackContext context)
@@ -187,13 +194,20 @@ public class PlayerController : MonoBehaviour
         float value = context.ReadValue<float>();
         bool pull = value > 0f;
         bool extend = value < 0f;
-        vehicleController.backWinch.pull = pull;
-        vehicleController.backWinch.extend = extend;
+
         if (context.started)
         {
+            if (!vehicleController.backWinch.IsAttached && winchTarget != null && winchTarget.BackWinchAvailable)
+            {
+                vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
+                onBackWinchAttached?.Invoke();
+            }
             if (pull) onAnyWinchPull?.Invoke();
             if (extend) onAnyWinchExtend?.Invoke();
         }
+
+        vehicleController.backWinch.pull = pull;
+        vehicleController.backWinch.extend = extend;
     }
 
     private void OnLook(InputAction.CallbackContext context)
