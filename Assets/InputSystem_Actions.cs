@@ -143,7 +143,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""id"": ""cdd69e08-c997-455c-bd42-9cbaead09b8f"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
-                    ""interactions"": ""SlowTap"",
+                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -161,7 +161,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""id"": ""f9c7d588-d791-4f79-8250-2f07d89e1864"",
                     ""expectedControlType"": ""Axis"",
                     ""processors"": """",
-                    ""interactions"": ""SlowTap"",
+                    ""interactions"": ""Hold"",
                     ""initialStateCheck"": true
                 },
                 {

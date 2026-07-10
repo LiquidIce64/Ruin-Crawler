@@ -80,12 +80,10 @@ public class PlayerController : MonoBehaviour
         input.Player.Jump.performed += OnJump;
 
         input.Player.FrontWinch.performed += OnFrontWinch;
-        input.Player.FrontWinchPull.started += OnFrontWinchPull;
         input.Player.FrontWinchPull.performed += OnFrontWinchPull;
         input.Player.FrontWinchPull.canceled += OnFrontWinchPull;
 
         input.Player.BackWinch.performed += OnBackWinch;
-        input.Player.BackWinchPull.started += OnBackWinchPull;
         input.Player.BackWinchPull.performed += OnBackWinchPull;
         input.Player.BackWinchPull.canceled += OnBackWinchPull;
     }
@@ -105,12 +103,10 @@ public class PlayerController : MonoBehaviour
         input.Player.Jump.performed -= OnJump;
 
         input.Player.FrontWinch.performed -= OnFrontWinch;
-        input.Player.FrontWinchPull.started -= OnFrontWinchPull;
         input.Player.FrontWinchPull.performed -= OnFrontWinchPull;
         input.Player.FrontWinchPull.canceled -= OnFrontWinchPull;
 
         input.Player.BackWinch.performed -= OnBackWinch;
-        input.Player.BackWinchPull.started -= OnBackWinchPull;
         input.Player.BackWinchPull.performed -= OnBackWinchPull;
         input.Player.BackWinchPull.canceled -= OnBackWinchPull;
     }
@@ -155,17 +151,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnFrontWinchPull(InputAction.CallbackContext context)
     {
+        if (!vehicleController.frontWinch.IsAttached) return;
         float value = context.ReadValue<float>();
         bool pull = value > 0f;
         bool extend = value < 0f;
 
-        if (context.started)
+        if (context.performed)
         {
-            if (!vehicleController.frontWinch.IsAttached && winchTarget != null && winchTarget.FrontWinchAvailable)
-            {
-                vehicleController.frontWinch.Attach(winchTarget.AttachmentPoint);
-                onFrontWinchAttached?.Invoke();
-            }
             if (pull) onAnyWinchPull?.Invoke();
             if (extend) onAnyWinchExtend?.Invoke();
         }
@@ -191,17 +183,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnBackWinchPull(InputAction.CallbackContext context)
     {
+        if (!vehicleController.backWinch.IsAttached) return;
         float value = context.ReadValue<float>();
         bool pull = value > 0f;
         bool extend = value < 0f;
 
-        if (context.started)
+        if (context.performed)
         {
-            if (!vehicleController.backWinch.IsAttached && winchTarget != null && winchTarget.BackWinchAvailable)
-            {
-                vehicleController.backWinch.Attach(winchTarget.AttachmentPoint);
-                onBackWinchAttached?.Invoke();
-            }
             if (pull) onAnyWinchPull?.Invoke();
             if (extend) onAnyWinchExtend?.Invoke();
         }
