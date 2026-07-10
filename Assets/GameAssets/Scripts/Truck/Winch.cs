@@ -35,6 +35,10 @@ public class Winch : MonoBehaviour
     [SerializeField] private AudioClip attachSound;
     [SerializeField] private AudioClip detachSound;
 
+    [Header("Loop sound")]
+    [SerializeField] private AudioSource winchLoopAudioSource;
+    [SerializeField] private AudioClip winchLoopSound;
+
     private void Awake()
     {
         rope = transform.GetChild(0).gameObject;
@@ -47,6 +51,12 @@ public class Winch : MonoBehaviour
 
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+
+        if (winchLoopAudioSource != null && winchLoopSound != null)
+        {
+            winchLoopAudioSource.clip = winchLoopSound;
+            winchLoopAudioSource.loop = true;
+        }
     }
 
     public IEnumerable<Rigidbody> FindAttachmentPoints()
@@ -126,6 +136,24 @@ public class Winch : MonoBehaviour
 
     private void Update()
     {
+        if (winchLoopAudioSource != null && winchLoopAudioSource.clip != null)
+        {
+            bool shouldPlay = (pull || extend) && joint.connectedBody != null;
+            if (shouldPlay)
+            {
+                if (!winchLoopAudioSource.isPlaying)
+                {
+                    winchLoopAudioSource.time = Random.Range(0f, winchLoopAudioSource.clip.length);
+                    winchLoopAudioSource.Play();
+                }
+            }
+            else
+            {
+                if (winchLoopAudioSource.isPlaying)
+                    winchLoopAudioSource.Stop();
+            }
+        }
+
         if (joint.connectedBody == null)
         {
             ropeAnimT = Mathf.Clamp(ropeAnimT - ropeAnimSpeed * Time.deltaTime, 0f, 1f);

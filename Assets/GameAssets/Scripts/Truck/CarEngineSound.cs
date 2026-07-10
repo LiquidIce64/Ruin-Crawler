@@ -7,7 +7,7 @@ public class CarEngineSound : MonoBehaviour
     private float minPitch = 0.5f;
     private float maxPitch = 1.8f;
     private float pitchSmoothTime = 1f;
-    private float maxVolume = 0.5f;
+    private float maxVolume = 0.6f;
     private float fadeOutDuration = 3f;
     private float volumeRecoverySpeed = 8f;
 
@@ -54,6 +54,12 @@ public class CarEngineSound : MonoBehaviour
         targetPitch = grounded
             ? Mathf.Lerp(minPitch, maxPitch, vehicleController.CurrentSpeedNormalized)
             : minPitch;
+
+        if (vehicleController.turbo)
+        {
+            targetPitch += 0.4f;
+        }
+
         audioSource.pitch = Mathf.SmoothDamp(audioSource.pitch, targetPitch, ref pitchVelocity, pitchSmoothTime);
 
         wasGrounded = grounded;
